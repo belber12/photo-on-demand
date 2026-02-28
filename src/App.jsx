@@ -227,47 +227,32 @@ function BeforeAfterSlider({ beforeUrl, afterUrl }) {
       role="group"
       aria-label="Слайдер до и после"
     >
-      {/* BEFORE (blurred cover bg + contain fg to avoid "zoom") */}
-      <img
-        src={beforeUrl}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-35"
-        style={{ objectPosition: "50% 50%" }}
-        draggable={false}
-        aria-hidden="true"
-      />
-      <img
-        src={beforeUrl}
-        alt="До"
-        className="absolute inset-0 w-full h-full object-contain"
-        style={{ objectPosition: "50% 50%", transform: "translateZ(0)" }}
-        draggable={false}
-      />
+      {/* BEFORE layer */}
       <div
-        className="absolute inset-0 overflow-hidden"
+        className="absolute inset-0"
+        aria-hidden="true"
         style={{
+          backgroundImage: `url("${beforeUrl}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "50% 50%",
+          transform: "translateZ(0)",
+        }}
+      />
+
+      {/* AFTER layer (same size, clipped) */}
+      <div
+        className="absolute inset-0"
+        aria-hidden="true"
+        style={{
+          backgroundImage: `url("${afterUrl}")`,
+          backgroundSize: "cover",
+          backgroundPosition: "50% 50%",
+          transform: "translateZ(0)",
           clipPath: `inset(0 ${(1 - pos) * 100}% 0 0)`,
+          WebkitClipPath: `inset(0 ${(1 - pos) * 100}% 0 0)`,
           willChange: "clip-path",
         }}
-        aria-hidden="true"
-      >
-        {/* AFTER (blurred cover bg + contain fg to avoid "zoom") */}
-        <img
-          src={afterUrl}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-35"
-          style={{ objectPosition: "50% 50%" }}
-          draggable={false}
-          aria-hidden="true"
-        />
-        <img
-          src={afterUrl}
-          alt="После"
-          className="absolute inset-0 w-full h-full object-contain"
-          style={{ objectPosition: "50% 50%", transform: "translateZ(0)" }}
-          draggable={false}
-        />
-      </div>
+      />
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" aria-hidden="true" />
 
