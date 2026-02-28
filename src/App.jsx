@@ -342,6 +342,8 @@ export default function PhotoOnDemandLanding() {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [stickyDismissed, setStickyDismissed] = useState(false);
   const { ref: ctaPeekRef, inView: ctaPeekInView } = useInView({ threshold: 0.12, rootMargin: "0px 0px -35% 0px", once: false });
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadStatus, setLeadStatus] = useState("idle"); // idle | sending | success | error
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
@@ -583,6 +585,32 @@ export default function PhotoOnDemandLanding() {
     if (ctaPeekInView) return false;
     return scrollY > 420;
   }, [stickyDismissed, mobileOpen, footerInView, ctaPeekInView, scrollY]);
+
+  const encode = useCallback((data) => {
+    return Object.keys(data)
+      .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+      .join("&");
+  }, []);
+
+  const submitLead = useCallback(
+    async (email) => {
+      setLeadStatus("sending");
+      try {
+        const body = encode({ "form-name": "lead", email });
+        const res = await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        });
+        if (!res.ok) throw new Error(`Bad status: ${res.status}`);
+        setLeadStatus("success");
+        setLeadEmail("");
+      } catch {
+        setLeadStatus("error");
+      }
+    },
+    [encode],
+  );
 
   return (
     <div className="min-h-screen bg-[color:var(--bg-primary)] text-white selection:bg-white/20 selection:text-white pb-24 md:pb-0">
@@ -1616,13 +1644,29 @@ export default function PhotoOnDemandLanding() {
                 className="grid gap-3"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (leadStatus === "sending") return;
+                  const email = leadEmail.trim();
+                  if (!email) return;
+                  submitLead(email);
                 }}
+                name="lead"
+                data-netlify="true"
+                netlify-honeypot="bot-field"
               >
+                <input type="hidden" name="form-name" value="lead" />
+                <p className="hidden">
+                  <label>
+                    Don’t fill this out: <input name="bot-field" />
+                  </label>
+                </p>
                 <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
                   <input
                     type="email"
                     required
                     placeholder="Ваш email"
+                    name="email"
+                    value={leadEmail}
+                    onChange={(e) => setLeadEmail(e.target.value)}
                     className={cn(
                       "h-12 min-h-[44px] w-full rounded-2xl px-4",
                       "bg-white/80 text-black placeholder:text-black/50",
@@ -1631,17 +1675,27 @@ export default function PhotoOnDemandLanding() {
                   />
                   <button
                     type="submit"
+                    disabled={leadStatus === "sending"}
                     className={cn(
                       "h-12 min-h-[44px] rounded-2xl px-5 font-semibold",
                       "bg-black text-white",
                       "transition-transform hover:scale-[1.03] active:scale-[1.01]",
+                      leadStatus === "sending" ? "opacity-70 cursor-not-allowed" : "",
                     )}
                   >
-                    Подписаться
+                    {leadStatus === "sending" ? "Отправляем..." : leadStatus === "success" ? "Готово" : "Подписаться"}
                   </button>
                 </div>
-                <div className="text-xs text-black/70">
-                  Никакого спама. Только бриф и идеи. Можно отписаться в любой момент.
+                <div className="text-xs">
+                  {leadStatus === "success" ? (
+                    <span className="text-black/80 font-semibold">Заявка отправлена. Скоро напишем.</span>
+                  ) : leadStatus === "error" ? (
+                    <span className="text-black/80 font-semibold">
+                      Не удалось отправить. Попробуйте ещё раз (или обновите страницу).
+                    </span>
+                  ) : (
+                    <span className="text-black/70">Никакого спама. Только бриф и идеи. Можно отписаться в любой момент.</span>
+                  )}
                 </div>
               </form>
             </div>
