@@ -227,10 +227,19 @@ function BeforeAfterSlider({ beforeUrl, afterUrl }) {
       role="group"
       aria-label="Слайдер до и после"
     >
+      {/* BEFORE (blurred cover bg + contain fg to avoid "zoom") */}
+      <img
+        src={beforeUrl}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-35"
+        style={{ objectPosition: "50% 50%" }}
+        draggable={false}
+        aria-hidden="true"
+      />
       <img
         src={beforeUrl}
         alt="До"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-contain"
         style={{ objectPosition: "50% 50%", transform: "translateZ(0)" }}
         draggable={false}
       />
@@ -242,10 +251,19 @@ function BeforeAfterSlider({ beforeUrl, afterUrl }) {
         }}
         aria-hidden="true"
       >
+        {/* AFTER (blurred cover bg + contain fg to avoid "zoom") */}
+        <img
+          src={afterUrl}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-35"
+          style={{ objectPosition: "50% 50%" }}
+          draggable={false}
+          aria-hidden="true"
+        />
         <img
           src={afterUrl}
           alt="После"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain"
           style={{ objectPosition: "50% 50%", transform: "translateZ(0)" }}
           draggable={false}
         />
