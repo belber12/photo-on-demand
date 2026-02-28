@@ -326,7 +326,7 @@ function Section({ id, children, className, innerClassName }) {
         className,
       )}
     >
-      <div className={cn("mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8", innerClassName)}>{children}</div>
+      <div className={cn("mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16", innerClassName)}>{children}</div>
     </section>
   );
 }
@@ -796,7 +796,7 @@ export default function PhotoOnDemandLanding() {
           scrolled ? "bg-white/5 backdrop-blur-xl border-b border-[color:var(--border)]" : "bg-transparent",
         )}
       >
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="h-16 flex items-center justify-between gap-3">
             <button
               type="button"
@@ -980,7 +980,7 @@ export default function PhotoOnDemandLanding() {
           animation: "blobFloat 16s ease-in-out infinite",
         }} />
 
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16 pt-16 sm:pt-20 lg:pt-24 pb-16">
           <div className="grid lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7">
               <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5", "border border-[color:var(--border)] bg-[color:var(--card-bg)]", heroClasses.chips)}>
@@ -1278,69 +1278,71 @@ export default function PhotoOnDemandLanding() {
           featuresInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
         )}
       >
-        <div className="flex items-end justify-between gap-6 flex-wrap">
-          <div>
-            <div className="text-xs sm:text-sm text-white/60">Преимущества</div>
-            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-              Сервис, который ощущается как{" "}
-              <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
-                премиум
-              </span>
-              .
-            </h2>
-            <p className="mt-3 text-white/70 max-w-2xl">
-              Мы делаем не просто “фото”, а цельную визуальную систему: от идеи до готовых форматов под ваши площадки.
-            </p>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16">
+          <div className="flex items-end justify-between gap-6 flex-wrap">
+            <div>
+              <div className="text-xs sm:text-sm text-white/60">Преимущества</div>
+              <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+                Сервис, который ощущается как{" "}
+                <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                  премиум
+                </span>
+                .
+              </h2>
+              <p className="mt-3 text-white/70 max-w-2xl">
+                Мы делаем не просто “фото”, а цельную визуальную систему: от идеи до готовых форматов под ваши площадки.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => scrollToId("cta")}
+              className={cn(
+                "h-12 min-h-[44px] px-5 rounded-2xl text-sm font-semibold",
+                "border border-[color:var(--border)] bg-[color:var(--card-bg)] text-white/90",
+                "transition-transform hover:scale-[1.05] active:scale-[1.01] card-hover",
+              )}
+            >
+              Получить подбор концепта
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => scrollToId("cta")}
-            className={cn(
-              "h-12 min-h-[44px] px-5 rounded-2xl text-sm font-semibold",
-              "border border-[color:var(--border)] bg-[color:var(--card-bg)] text-white/90",
-              "transition-transform hover:scale-[1.05] active:scale-[1.01] card-hover",
-            )}
-          >
-            Получить подбор концепта
-          </button>
-        </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => {
-            const Icon = f.icon;
-            return (
-              <div
-                key={f.title}
-                className={cn(
-                  "group rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl",
-                  "p-6 transition-all duration-700 ease-out card-hover",
-                  featuresInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-                  "hover:scale-[1.03] hover:-translate-y-1",
-                )}
-                style={{ transitionDelay: `${i * 90}ms` }}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={cn(
-                      "h-11 w-11 rounded-2xl grid place-items-center",
-                      "border border-[color:var(--border)] bg-white/5",
-                      "group-hover:border-white/25 transition-colors",
-                    )}
-                    aria-hidden="true"
-                  >
-                    <Icon className="h-5 w-5 text-white/90" />
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <div
+                  key={f.title}
+                  className={cn(
+                    "group rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl",
+                    "p-6 transition-all duration-700 ease-out card-hover",
+                    featuresInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
+                    "hover:scale-[1.03] hover:-translate-y-1",
+                  )}
+                  style={{ transitionDelay: `${i * 90}ms` }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn(
+                        "h-11 w-11 rounded-2xl grid place-items-center",
+                        "border border-[color:var(--border)] bg-white/5",
+                        "group-hover:border-white/25 transition-colors",
+                      )}
+                      aria-hidden="true"
+                    >
+                      <Icon className="h-5 w-5 text-white/90" />
+                    </div>
+                    <div className="text-sm font-semibold text-white/90">{f.title}</div>
                   </div>
-                  <div className="text-sm font-semibold text-white/90">{f.title}</div>
+                  <p className="mt-3 text-sm text-white/70 leading-relaxed">{f.desc}</p>
+                  <div className="mt-5 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" aria-hidden="true" />
+                  <div className="mt-4 flex items-center gap-2 text-xs text-white/55">
+                    <Check className="h-4 w-4 text-white/70" />
+                    <span>Проверено на реальных задачах</span>
+                  </div>
                 </div>
-                <p className="mt-3 text-sm text-white/70 leading-relaxed">{f.desc}</p>
-                <div className="mt-5 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" aria-hidden="true" />
-                <div className="mt-4 flex items-center gap-2 text-xs text-white/55">
-                  <Check className="h-4 w-4 text-white/70" />
-                  <span>Проверено на реальных задачах</span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -1354,7 +1356,7 @@ export default function PhotoOnDemandLanding() {
           statsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
         )}
       >
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--accent-to)] to-transparent opacity-60" />
           <div className="mt-10 flex items-end justify-between gap-6 flex-wrap">
             <div>
@@ -1794,7 +1796,7 @@ export default function PhotoOnDemandLanding() {
           footerInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
         )}
       >
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16">
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <div className="flex items-center gap-2">
