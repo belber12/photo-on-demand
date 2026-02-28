@@ -227,15 +227,28 @@ function BeforeAfterSlider({ beforeUrl, afterUrl }) {
       role="group"
       aria-label="Слайдер до и после"
     >
-      <img src={beforeUrl} alt="До" className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+      <img
+        src={beforeUrl}
+        alt="До"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "50% 50%", transform: "translateZ(0)" }}
+        draggable={false}
+      />
       <div
         className="absolute inset-0 overflow-hidden"
         style={{
-          clipPath: `polygon(0 0, ${pos * 100}% 0, ${pos * 100}% 100%, 0 100%)`,
+          clipPath: `inset(0 ${(1 - pos) * 100}% 0 0)`,
+          willChange: "clip-path",
         }}
         aria-hidden="true"
       >
-        <img src={afterUrl} alt="После" className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+        <img
+          src={afterUrl}
+          alt="После"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: "50% 50%", transform: "translateZ(0)" }}
+          draggable={false}
+        />
       </div>
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" aria-hidden="true" />
