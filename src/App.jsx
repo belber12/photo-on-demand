@@ -342,7 +342,11 @@ export default function PhotoOnDemandLanding() {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [stickyDismissed, setStickyDismissed] = useState(false);
   const { ref: ctaPeekRef, inView: ctaPeekInView } = useInView({ threshold: 0.12, rootMargin: "0px 0px -35% 0px", once: false });
+  const [leadName, setLeadName] = useState("");
   const [leadEmail, setLeadEmail] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadShootType, setLeadShootType] = useState("Портрет");
+  const [leadMessage, setLeadMessage] = useState("");
   const [leadStatus, setLeadStatus] = useState("idle"); // idle | sending | success | error
 
   useEffect(() => {
@@ -593,10 +597,17 @@ export default function PhotoOnDemandLanding() {
   }, []);
 
   const submitLead = useCallback(
-    async (email) => {
+    async ({ name, email, phone, shootType, message }) => {
       setLeadStatus("sending");
       try {
-        const body = encode({ "form-name": "lead", email });
+        const body = encode({
+          "form-name": "lead",
+          name,
+          email,
+          phone,
+          shootType,
+          message,
+        });
         const res = await fetch("/", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -604,7 +615,11 @@ export default function PhotoOnDemandLanding() {
         });
         if (!res.ok) throw new Error(`Bad status: ${res.status}`);
         setLeadStatus("success");
+        setLeadName("");
         setLeadEmail("");
+        setLeadPhone("");
+        setLeadShootType("Портрет");
+        setLeadMessage("");
       } catch {
         setLeadStatus("error");
       }
@@ -1647,7 +1662,13 @@ export default function PhotoOnDemandLanding() {
                   if (leadStatus === "sending") return;
                   const email = leadEmail.trim();
                   if (!email) return;
-                  submitLead(email);
+                  submitLead({
+                    name: leadName.trim(),
+                    email,
+                    phone: leadPhone.trim(),
+                    shootType: leadShootType,
+                    message: leadMessage.trim(),
+                  });
                 }}
                 name="lead"
                 data-netlify="true"
@@ -1659,32 +1680,93 @@ export default function PhotoOnDemandLanding() {
                     Don’t fill this out: <input name="bot-field" />
                   </label>
                 </p>
-                <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-                  <input
-                    type="email"
-                    required
-                    placeholder="Ваш email"
-                    name="email"
-                    value={leadEmail}
-                    onChange={(e) => setLeadEmail(e.target.value)}
+                <div className="grid gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <input
+                      type="text"
+                      placeholder="Имя (необязательно)"
+                      name="name"
+                      value={leadName}
+                      onChange={(e) => setLeadName(e.target.value)}
+                      className={cn(
+                        "h-12 min-h-[44px] w-full rounded-2xl px-4",
+                        "bg-white/80 text-black placeholder:text-black/50",
+                        "outline-none focus:ring-2 focus:ring-black/20",
+                      )}
+                    />
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="Телефон (необязательно)"
+                      name="phone"
+                      value={leadPhone}
+                      onChange={(e) => setLeadPhone(e.target.value)}
+                      className={cn(
+                        "h-12 min-h-[44px] w-full rounded-2xl px-4",
+                        "bg-white/80 text-black placeholder:text-black/50",
+                        "outline-none focus:ring-2 focus:ring-black/20",
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+                    <input
+                      type="email"
+                      required
+                      placeholder="Ваш email"
+                      name="email"
+                      value={leadEmail}
+                      onChange={(e) => setLeadEmail(e.target.value)}
+                      className={cn(
+                        "h-12 min-h-[44px] w-full rounded-2xl px-4",
+                        "bg-white/80 text-black placeholder:text-black/50",
+                        "outline-none focus:ring-2 focus:ring-black/20",
+                      )}
+                    />
+                    <button
+                      type="submit"
+                      disabled={leadStatus === "sending"}
+                      className={cn(
+                        "h-12 min-h-[44px] rounded-2xl px-5 font-semibold",
+                        "bg-black text-white",
+                        "transition-transform hover:scale-[1.03] active:scale-[1.01]",
+                        leadStatus === "sending" ? "opacity-70 cursor-not-allowed" : "",
+                      )}
+                    >
+                      {leadStatus === "sending" ? "Отправляем..." : leadStatus === "success" ? "Готово" : "Отправить"}
+                    </button>
+                  </div>
+
+                  <select
+                    name="shootType"
+                    value={leadShootType}
+                    onChange={(e) => setLeadShootType(e.target.value)}
                     className={cn(
                       "h-12 min-h-[44px] w-full rounded-2xl px-4",
-                      "bg-white/80 text-black placeholder:text-black/50",
+                      "bg-white/80 text-black",
                       "outline-none focus:ring-2 focus:ring-black/20",
                     )}
-                  />
-                  <button
-                    type="submit"
-                    disabled={leadStatus === "sending"}
-                    className={cn(
-                      "h-12 min-h-[44px] rounded-2xl px-5 font-semibold",
-                      "bg-black text-white",
-                      "transition-transform hover:scale-[1.03] active:scale-[1.01]",
-                      leadStatus === "sending" ? "opacity-70 cursor-not-allowed" : "",
-                    )}
                   >
-                    {leadStatus === "sending" ? "Отправляем..." : leadStatus === "success" ? "Готово" : "Подписаться"}
-                  </button>
+                    <option value="Портрет">Тип съёмки: Портрет</option>
+                    <option value="Бизнес">Тип съёмки: Бизнес</option>
+                    <option value="Семейная">Тип съёмки: Семейная</option>
+                    <option value="Предметка">Тип съёмки: Предметка</option>
+                    <option value="Другое">Тип съёмки: Другое</option>
+                  </select>
+
+                  <textarea
+                    name="message"
+                    value={leadMessage}
+                    onChange={(e) => setLeadMessage(e.target.value)}
+                    rows={3}
+                    placeholder="Комментарий (дата, город, примечания) — необязательно"
+                    className={cn(
+                      "min-h-[96px] w-full rounded-2xl px-4 py-3",
+                      "bg-white/80 text-black placeholder:text-black/50",
+                      "outline-none focus:ring-2 focus:ring-black/20",
+                      "resize-none",
+                    )}
+                  />
                 </div>
                 <div className="text-xs">
                   {leadStatus === "success" ? (
