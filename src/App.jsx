@@ -115,6 +115,19 @@ function pickShoePhotos(portfolio) {
   });
 }
 
+function pickPinnedPostPhotos(portfolio) {
+  const normalize = (p) => (p || "").toLowerCase().replaceAll("\\", "/");
+  const map = new Map(portfolio.map((p) => [normalize(p.path), p]));
+  const pinnedOrder = ["/пост/2.jpg", "/пост/2_1.jpg", "/пост/2_2.jpg"];
+  const found = [];
+
+  for (const part of pinnedOrder) {
+    const hit = Array.from(map.entries()).find(([path]) => path.endsWith(part));
+    if (hit?.[1]) found.push(hit[1]);
+  }
+  return found;
+}
+
 function BeforeAfterSlider({ beforeUrl, afterUrl }) {
   const wrapRef = useRef(null);
   const [pos, setPos] = useState(0.52); // 0..1
@@ -434,14 +447,23 @@ export default function PhotoOnDemandLanding() {
       .sort((a, b) => a.path.localeCompare(b.path));
   }, []);
 
+  const pinnedPostPortfolio = useMemo(() => pickPinnedPostPhotos(portfolio), [portfolio]);
   const shoePortfolio = useMemo(() => pickShoePhotos(portfolio), [portfolio]);
   const effectivePortfolio = useMemo(
-    () => (shoePortfolio.length > 0 ? shoePortfolio : portfolio),
-    [shoePortfolio, portfolio],
+    () => (pinnedPostPortfolio.length > 0 ? pinnedPostPortfolio : shoePortfolio.length > 0 ? shoePortfolio : portfolio),
+    [pinnedPostPortfolio, shoePortfolio, portfolio],
   );
 
-  const heroBgUrl = effectivePortfolio[0]?.url || null;
-  const { beforeUrl, afterUrl } = useMemo(() => pickBeforeAfter(effectivePortfolio), [effectivePortfolio]);
+  const heroBgUrl = pinnedPostPortfolio[2]?.url || effectivePortfolio[0]?.url || null;
+  const { beforeUrl, afterUrl } = useMemo(() => {
+    if (pinnedPostPortfolio.length >= 2) {
+      return {
+        beforeUrl: pinnedPostPortfolio[0].url,
+        afterUrl: pinnedPostPortfolio[1].url,
+      };
+    }
+    return pickBeforeAfter(effectivePortfolio);
+  }, [pinnedPostPortfolio, effectivePortfolio]);
 
   useEffect(() => {
     if (lightboxIndex === null) return;
