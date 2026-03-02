@@ -107,6 +107,14 @@ function pickBeforeAfter(portfolio) {
   return { beforeUrl: null, afterUrl: null };
 }
 
+function pickShoePhotos(portfolio) {
+  const keywords = ["обув", "shoe", "obuv", "sneaker", "кросс"];
+  return portfolio.filter((p) => {
+    const path = (p.path || "").toLowerCase();
+    return keywords.some((k) => path.includes(k));
+  });
+}
+
 function BeforeAfterSlider({ beforeUrl, afterUrl }) {
   const wrapRef = useRef(null);
   const [pos, setPos] = useState(0.52); // 0..1
@@ -426,19 +434,25 @@ export default function PhotoOnDemandLanding() {
       .sort((a, b) => a.path.localeCompare(b.path));
   }, []);
 
-  const heroBgUrl = portfolio[0]?.url || null;
-  const { beforeUrl, afterUrl } = useMemo(() => pickBeforeAfter(portfolio), [portfolio]);
+  const shoePortfolio = useMemo(() => pickShoePhotos(portfolio), [portfolio]);
+  const effectivePortfolio = useMemo(
+    () => (shoePortfolio.length > 0 ? shoePortfolio : portfolio),
+    [shoePortfolio, portfolio],
+  );
+
+  const heroBgUrl = effectivePortfolio[0]?.url || null;
+  const { beforeUrl, afterUrl } = useMemo(() => pickBeforeAfter(effectivePortfolio), [effectivePortfolio]);
 
   useEffect(() => {
     if (lightboxIndex === null) return;
     const onKeyDown = (e) => {
       if (e.key === "Escape") setLightboxIndex(null);
-      if (e.key === "ArrowLeft") setLightboxIndex((i) => (i === null ? null : (i - 1 + portfolio.length) % portfolio.length));
-      if (e.key === "ArrowRight") setLightboxIndex((i) => (i === null ? null : (i + 1) % portfolio.length));
+      if (e.key === "ArrowLeft") setLightboxIndex((i) => (i === null ? null : (i - 1 + effectivePortfolio.length) % effectivePortfolio.length));
+      if (e.key === "ArrowRight") setLightboxIndex((i) => (i === null ? null : (i + 1) % effectivePortfolio.length));
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [lightboxIndex, portfolio.length]);
+  }, [lightboxIndex, effectivePortfolio.length]);
 
   const features = useMemo(
     () => [
@@ -749,7 +763,7 @@ export default function PhotoOnDemandLanding() {
       `}</style>
 
       {/* Lightbox */}
-      {lightboxIndex !== null && portfolio[lightboxIndex]?.url && (
+      {lightboxIndex !== null && effectivePortfolio[lightboxIndex]?.url && (
         <div className="fixed inset-0 z-[80]">
           <div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
@@ -771,16 +785,20 @@ export default function PhotoOnDemandLanding() {
 
               <div className="relative rounded-3xl border border-[color:var(--border)] bg-black/40 backdrop-blur-xl overflow-hidden">
                 <img
-                  src={portfolio[lightboxIndex].url}
+                  src={effectivePortfolio[lightboxIndex].url}
                   alt="Фото из портфолио"
                   className="w-full max-h-[78vh] object-contain bg-black/30"
                 />
 
-                {portfolio.length > 1 && (
+                {effectivePortfolio.length > 1 && (
                   <>
                     <button
                       type="button"
-                      onClick={() => setLightboxIndex((i) => (i === null ? null : (i - 1 + portfolio.length) % portfolio.length))}
+                      onClick={() =>
+                        setLightboxIndex((i) =>
+                          i === null ? null : (i - 1 + effectivePortfolio.length) % effectivePortfolio.length,
+                        )
+                      }
                       className="absolute left-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card-bg)] grid place-items-center transition-transform hover:scale-[1.05]"
                       aria-label="Предыдущее фото"
                     >
@@ -788,7 +806,9 @@ export default function PhotoOnDemandLanding() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setLightboxIndex((i) => (i === null ? null : (i + 1) % portfolio.length))}
+                      onClick={() =>
+                        setLightboxIndex((i) => (i === null ? null : (i + 1) % effectivePortfolio.length))
+                      }
                       className="absolute right-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-2xl border border-[color:var(--border)] bg-[color:var(--card-bg)] grid place-items-center transition-transform hover:scale-[1.05]"
                       aria-label="Следующее фото"
                     >
@@ -1217,7 +1237,7 @@ export default function PhotoOnDemandLanding() {
           </button>
         </div>
 
-        {portfolio.length === 0 ? (
+        {effectivePortfolio.length === 0 ? (
           <div className="mt-10 rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-6 text-white/70">
             <div className="text-sm font-semibold text-white/90">Фото пока не подключены.</div>
             <div className="mt-2 text-sm leading-relaxed">
@@ -1234,11 +1254,13 @@ export default function PhotoOnDemandLanding() {
               </div>
               <div className="relative">
                 <div className="marquee gap-3 px-5 pb-5">
-                  {[...portfolio, ...portfolio].slice(0, Math.min(24, portfolio.length * 2)).map((p, idx) => (
+                  {[...effectivePortfolio, ...effectivePortfolio]
+                    .slice(0, Math.min(24, effectivePortfolio.length * 2))
+                    .map((p, idx) => (
                     <button
                       key={`${p.path}-${idx}`}
                       type="button"
-                      onClick={() => setLightboxIndex(idx % portfolio.length)}
+                      onClick={() => setLightboxIndex(idx % effectivePortfolio.length)}
                       className="relative h-28 w-44 sm:h-32 sm:w-52 rounded-2xl overflow-hidden border border-white/10 bg-black/20 shrink-0 transition-transform hover:scale-[1.03]"
                       aria-label="Открыть фото"
                     >
@@ -1255,7 +1277,7 @@ export default function PhotoOnDemandLanding() {
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {portfolio.slice(0, 9).map((p, idx) => (
+              {effectivePortfolio.slice(0, 9).map((p, idx) => (
                 <button
                   key={p.path}
                   type="button"
