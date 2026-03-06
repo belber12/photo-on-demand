@@ -368,6 +368,7 @@ export default function PhotoOnDemandLanding() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [licenseAccepted, setLicenseAccepted] = useState(false);
+  const [toolTab, setToolTab] = useState("generation");
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
@@ -411,6 +412,7 @@ export default function PhotoOnDemandLanding() {
     () => [
       { id: "features", label: "Преимущества" },
       { id: "portfolio", label: "Работы" },
+      { id: "tool", label: "Инструмент" },
       { id: "audience", label: "Для кого" },
       { id: "services", label: "Услуги" },
       { id: "stats", label: "Цифры" },
@@ -562,6 +564,42 @@ export default function PhotoOnDemandLanding() {
         desc: "Полный цикл: идея, съёмка, ретушь и выдача в нужных форматах.",
       },
     ],
+    [],
+  );
+
+  const toolTabs = useMemo(
+    () => [
+      { id: "generation", label: "Генерация" },
+      { id: "retouch", label: "Ретушь" },
+      { id: "upscale", label: "Апскейл" },
+      { id: "restore", label: "Восстановление" },
+    ],
+    [],
+  );
+
+  const toolHintCards = useMemo(
+    () => ({
+      generation: [
+        { title: "Промпт", text: "Опишите идею кадра: свет, стиль, настроение, детали." },
+        { title: "Референс", text: "Добавьте пример изображения, чтобы повторить подачу и композицию." },
+        { title: "Варианты", text: "Сгенерируйте 2-4 версии и выберите лучший результат." },
+      ],
+      retouch: [
+        { title: "Кожа и фактура", text: "Чистая, аккуратная ретушь без эффекта пластика." },
+        { title: "Цвет", text: "Выравнивание тона и контраста под единый стиль бренда." },
+        { title: "Детали", text: "Точечная правка мелочей: пыль, заломы, дефекты." },
+      ],
+      upscale: [
+        { title: "2x / 4x", text: "Увеличение разрешения для печати, витрин и баннеров." },
+        { title: "Шум-контроль", text: "Сохраняем резкость, убираем артефакты и шум." },
+        { title: "Экспорт", text: "Готовые размеры под сайт, соцсети и рекламу." },
+      ],
+      restore: [
+        { title: "Старые фото", text: "Восстановление цвета, контраста и утерянных деталей." },
+        { title: "Повреждения", text: "Убираем царапины, трещины, пятна и дефекты скана." },
+        { title: "Финальная версия", text: "Получаете кадры в цифровом архивном качестве." },
+      ],
+    }),
     [],
   );
 
@@ -1350,6 +1388,121 @@ export default function PhotoOnDemandLanding() {
             </div>
           </>
         )}
+      </Section>
+
+      {/* TOOL */}
+      <Section id="tool" className="py-20 sm:py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div className="text-xs sm:text-sm text-white/60">Инструмент</div>
+            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Интуитивный{" "}
+              <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                интерфейс
+              </span>{" "}
+              как в pro-сервисах.
+            </h2>
+            <p className="mt-3 text-white/70 max-w-2xl">
+              Выберите режим работы и посмотрите, как выглядит процесс внутри.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1.4fr_1fr]">
+          <div className="grid gap-4">
+            {toolHintCards[toolTab].slice(0, 2).map((card) => (
+              <div
+                key={card.title}
+                className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-5"
+              >
+                <div className="text-base font-semibold text-white/90">{card.title}</div>
+                <p className="mt-2 text-sm text-white/70 leading-relaxed">{card.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-3xl border border-[color:var(--border)] bg-[#11131c]/90 backdrop-blur-xl overflow-hidden">
+            <div className="px-4 sm:px-5 py-4 border-b border-white/10">
+              <div className="text-[11px] tracking-[0.16em] uppercase text-white/50">PHOTO TOOL</div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {toolTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setToolTab(tab.id)}
+                    className={cn(
+                      "h-9 px-3 rounded-xl text-xs sm:text-sm font-semibold border transition-all",
+                      toolTab === tab.id
+                        ? "border-[var(--accent-to)] bg-white/10 text-white"
+                        : "border-white/10 bg-white/[0.03] text-white/70 hover:text-white hover:bg-white/[0.06]",
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 sm:p-5 grid gap-4">
+              <div>
+                <div className="text-xs text-white/55 mb-2">Введите задачу</div>
+                <textarea
+                  value={
+                    toolTab === "generation"
+                      ? "Портрет в стиле lifestyle, мягкий дневной свет, чистый фон, натуральная ретушь."
+                      : toolTab === "retouch"
+                        ? "Убрать дефекты кожи, выровнять тон, сохранить естественную текстуру."
+                        : toolTab === "upscale"
+                          ? "Увеличить до 4x для печати, сохранить чёткость и микродетали."
+                          : "Восстановить старое фото: вернуть цвет, убрать царапины и шум."
+                  }
+                  readOnly
+                  className="min-h-[96px] w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white/80"
+                />
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <div className="text-xs text-white/50">Режим</div>
+                  <div className="mt-1 text-sm font-semibold text-white/90">
+                    {toolTabs.find((x) => x.id === toolTab)?.label}
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <div className="text-xs text-white/50">Время выполнения</div>
+                  <div className="mt-1 text-sm font-semibold text-white/90">
+                    {toolTab === "generation" ? "≈ 20-40 сек" : toolTab === "retouch" ? "≈ 1-3 мин" : "≈ 30-90 сек"}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => scrollToId("pricing")}
+                className={cn(
+                  "h-12 rounded-2xl font-semibold text-black",
+                  "bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)]",
+                  "transition-transform btn-glow hover:scale-[1.02] active:scale-[1.01]",
+                )}
+              >
+                Запустить в выбранном тарифе
+              </button>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-5">
+              <div className="text-base font-semibold text-white/90">{toolHintCards[toolTab][2].title}</div>
+              <p className="mt-2 text-sm text-white/70 leading-relaxed">{toolHintCards[toolTab][2].text}</p>
+            </div>
+            <div className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-5">
+              <div className="text-base font-semibold text-white/90">Поддержка 24/7</div>
+              <p className="mt-2 text-sm text-white/70 leading-relaxed">
+                Если не уверены в настройках, поможем выбрать режим и подготовим референсы.
+              </p>
+            </div>
+          </div>
+        </div>
       </Section>
 
       {/* FEATURES */}
