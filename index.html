@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Фото на заказ — премиум-съёмка и ретушь</title>
+    <script type="module" crossorigin src="/assets/index-5tP54r6G.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-a93bs-7C.css">
+  </head>
+  <body>
+    <!-- Netlify Forms: hidden form for build-time detection -->
+    <form name="lead" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="lead" />
+      <p>
+        <label>
+          Don’t fill this out: <input name="bot-field" />
+        </label>
+      </p>
+      <p>
+        <label>Имя <input type="text" name="name" /></label>
+      </p>
+      <p>
+        <label>Email <input type="email" name="email" /></label>
+      </p>
+      <p>
+        <label>Телефон <input type="tel" name="phone" /></label>
+      </p>
+      <p>
+        <label>
+          Тип съёмки
+          <select name="shootType">
+            <option value="Портрет">Портрет</option>
+            <option value="Бизнес">Бизнес</option>
+            <option value="Семейная">Семейная</option>
+            <option value="Предметка">Предметка</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>Комментарий <textarea name="message"></textarea></label>
+      </p>
+    </form>
+    <div id="root"></div>
+  </body>
+</html>
