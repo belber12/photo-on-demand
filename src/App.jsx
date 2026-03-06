@@ -236,6 +236,7 @@ function BeforeAfterSlider({ beforeUrl, afterUrl }) {
           backgroundImage: `url("${beforeUrl}")`,
           backgroundSize: "cover",
           backgroundPosition: "50% 50%",
+          filter: "saturate(1.14) contrast(1.08) brightness(1.04)",
           transform: "translateZ(0)",
         }}
       />
@@ -248,6 +249,7 @@ function BeforeAfterSlider({ beforeUrl, afterUrl }) {
           backgroundImage: `url("${afterUrl}")`,
           backgroundSize: "cover",
           backgroundPosition: "50% 50%",
+          filter: "saturate(1.14) contrast(1.08) brightness(1.04)",
           transform: "translateZ(0)",
           clipPath: `inset(0 ${(1 - pos) * 100}% 0 0)`,
           WebkitClipPath: `inset(0 ${(1 - pos) * 100}% 0 0)`,
@@ -425,7 +427,7 @@ export default function PhotoOnDemandLanding() {
     [],
   );
 
-  const portfolio = useMemo(() => {
+  const allPortfolio = useMemo(() => {
     // Drop photos into: src/assets/portfolio/**/*
     // Works with any naming / subfolders; Vite will bundle and return URLs.
     const mods = import.meta.glob("./assets/portfolio/**/*.{jpg,jpeg,png,webp,avif,gif}", { eager: true });
@@ -435,9 +437,29 @@ export default function PhotoOnDemandLanding() {
       .sort((a, b) => a.path.localeCompare(b.path));
   }, []);
 
-  const effectivePortfolio = portfolio;
-  const heroBgUrl = portfolio[0]?.url || null;
-  const { beforeUrl, afterUrl } = useMemo(() => pickBeforeAfter(portfolio), [portfolio]);
+  const effectivePortfolio = useMemo(() => {
+    // Clean feed: use one coherent set from `Пост`, without mixing product folders.
+    const postOnly = allPortfolio.filter((p) => p.path.includes("/assets/portfolio/Пост/"));
+    const postMain = postOnly.filter((p) => !p.path.endsWith("/до.jpg") && !p.path.endsWith("/после.jpg"));
+    return postMain.length > 0 ? postMain : allPortfolio;
+  }, [allPortfolio]);
+
+  const ribbonPortfolio = useMemo(() => effectivePortfolio.slice(0, 12), [effectivePortfolio]);
+  const gridPortfolio = useMemo(() => effectivePortfolio.slice(0, 6), [effectivePortfolio]);
+
+  const heroBgUrl = useMemo(() => {
+    const preferredHero = effectivePortfolio.find((p) => p.path.includes("/assets/portfolio/Пост/1/"));
+    return preferredHero?.url || effectivePortfolio[0]?.url || null;
+  }, [effectivePortfolio]);
+
+  const { beforeUrl, afterUrl } = useMemo(() => {
+    const postBefore = allPortfolio.find((p) => p.path.endsWith("/Пост/до.jpg"));
+    const postAfter = allPortfolio.find((p) => p.path.endsWith("/Пост/после.jpg"));
+    if (postBefore?.url && postAfter?.url) return { beforeUrl: postBefore.url, afterUrl: postAfter.url };
+    return pickBeforeAfter(effectivePortfolio);
+  }, [allPortfolio, effectivePortfolio]);
+
+  const imageBoostClass = "saturate-[1.14] contrast-[1.08] brightness-[1.04]";
 
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -874,7 +896,7 @@ export default function PhotoOnDemandLanding() {
                 <img
                   src={effectivePortfolio[lightboxIndex].url}
                   alt="Фото из портфолио"
-                  className="w-full max-h-[78vh] object-contain bg-black/30"
+                  className={cn("w-full max-h-[78vh] object-contain bg-black/30", imageBoostClass)}
                 />
 
                 {effectivePortfolio.length > 1 && (
@@ -959,13 +981,13 @@ export default function PhotoOnDemandLanding() {
                 rel="noreferrer"
                 className={cn(
                   "inline-flex items-center justify-center h-11 w-11 rounded-xl",
-                  "border border-[color:var(--border)] bg-[color:var(--card-bg)]",
+                  "border border-[#229ED9]/50 bg-[#229ED9]/18 text-[#7dd3fc]",
                   "transition-transform hover:scale-[1.05] active:scale-[1.01]",
                 )}
                 aria-label="Telegram"
                 title="Написать в Telegram"
               >
-                <Send className="h-5 w-5 text-white/90" />
+                <Send className="h-5 w-5" />
               </a>
 
               <button
@@ -1056,6 +1078,18 @@ export default function PhotoOnDemandLanding() {
               ))}
             </div>
             <div className="mt-4 grid gap-2">
+              <a
+                href={telegramUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(
+                  "h-12 rounded-xl font-semibold text-sm grid place-items-center",
+                  "border border-[#229ED9]/50 bg-[#229ED9]/18 text-[#7dd3fc]",
+                  "transition-transform hover:scale-[1.03] active:scale-[1.01]",
+                )}
+              >
+                Написать в Telegram
+              </a>
               <button
                 type="button"
                 onClick={() => {
@@ -1355,17 +1389,17 @@ export default function PhotoOnDemandLanding() {
               </div>
               <div className="relative">
                 <div className="marquee gap-3 px-5 pb-5">
-                  {[...effectivePortfolio, ...effectivePortfolio]
-                    .slice(0, Math.min(24, effectivePortfolio.length * 2))
+                  {[...ribbonPortfolio, ...ribbonPortfolio]
+                    .slice(0, Math.min(24, ribbonPortfolio.length * 2))
                     .map((p, idx) => (
                     <button
                       key={`${p.path}-${idx}`}
                       type="button"
-                      onClick={() => setLightboxIndex(idx % effectivePortfolio.length)}
+                      onClick={() => setLightboxIndex(idx % ribbonPortfolio.length)}
                       className="relative h-28 w-44 sm:h-32 sm:w-52 rounded-2xl overflow-hidden border border-white/10 bg-black/20 shrink-0 transition-transform hover:scale-[1.03]"
                       aria-label="Открыть фото"
                     >
-                      <img src={p.url} alt="" className="absolute inset-0 w-full h-full object-cover" aria-hidden="true" />
+                      <img src={p.url} alt="" className={cn("absolute inset-0 w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true" />
                     </button>
                   ))}
@@ -1378,11 +1412,11 @@ export default function PhotoOnDemandLanding() {
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {effectivePortfolio.slice(0, 9).map((p, idx) => (
+              {gridPortfolio.map((p, idx) => (
                 <button
                   key={p.path}
                   type="button"
-                  onClick={() => setLightboxIndex(idx)}
+                  onClick={() => setLightboxIndex(Math.max(0, effectivePortfolio.findIndex((x) => x.path === p.path)))}
                   className={cn(
                     "relative overflow-hidden rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl",
                     "transition-transform card-hover hover:scale-[1.02] hover:-translate-y-1",
@@ -1390,7 +1424,7 @@ export default function PhotoOnDemandLanding() {
                   aria-label="Открыть фото"
                 >
                   <div className="aspect-[4/3] bg-black/25">
-                    <img src={p.url} alt="" className="w-full h-full object-cover" aria-hidden="true" />
+                    <img src={p.url} alt="" className={cn("w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-transparent" aria-hidden="true" />
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white/75">
