@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Sparkles,
   Star,
+  Send,
   ChevronLeft,
   ChevronRight,
   Twitter,
@@ -704,6 +705,7 @@ export default function PhotoOnDemandLanding() {
     if (ctaPeekInView) return false;
     return scrollY > 420;
   }, [stickyDismissed, mobileOpen, footerInView, ctaPeekInView, scrollY]);
+  const telegramUrl = "https://t.me/olegpmi";
 
   const encode = useCallback((data) => {
     return Object.keys(data)
@@ -951,6 +953,21 @@ export default function PhotoOnDemandLanding() {
             </nav>
 
             <div className="flex items-center gap-2">
+              <a
+                href={telegramUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={cn(
+                  "inline-flex items-center justify-center h-11 w-11 rounded-xl",
+                  "border border-[color:var(--border)] bg-[color:var(--card-bg)]",
+                  "transition-transform hover:scale-[1.05] active:scale-[1.01]",
+                )}
+                aria-label="Telegram"
+                title="Написать в Telegram"
+              >
+                <Send className="h-5 w-5 text-white/90" />
+              </a>
+
               <button
                 type="button"
                 onClick={() => scrollToId("pricing")}
