@@ -364,6 +364,10 @@ export default function PhotoOnDemandLanding() {
   const [leadShootType, setLeadShootType] = useState("Портрет");
   const [leadMessage, setLeadMessage] = useState("");
   const [leadStatus, setLeadStatus] = useState("idle"); // idle | sending | success | error
+  const [selectedPlan, setSelectedPlan] = useState("Про");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [licenseAccepted, setLicenseAccepted] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
@@ -446,32 +450,32 @@ export default function PhotoOnDemandLanding() {
       {
         icon: Sparkles,
         title: "Ретушь “как в журнале”",
-        desc: "Чистая кожа, аккуратная пластика и цвет — без эффекта “пластика”.",
+        desc: "Чистая кожа и цвет без эффекта пластика.",
       },
       {
         icon: Camera,
         title: "Съёмка под задачу",
-        desc: "Портрет, бизнес, love story, семейная, предметка — вы выбираете цель, мы строим кадр.",
+        desc: "Портрет, бизнес, семейная, предметка. Подбираем кадр под цель.",
       },
       {
         icon: Wand2,
         title: "Концепт + референсы",
-        desc: "Подбираем стиль, свет и локацию — чтобы результат попадал в ваш вайб с первого раза.",
+        desc: "Собираем стиль, свет и локацию заранее.",
       },
       {
         icon: Zap,
         title: "Быстрый turnaround",
-        desc: "Первые превью — уже в течение 24 часов. Финальные кадры — по готовности тарифа.",
+        desc: "Превью за 24 часа, финал — по тарифу.",
       },
       {
         icon: ShieldCheck,
         title: "Безопасно и конфиденциально",
-        desc: "Договорённости фиксируем. Приватность — по умолчанию (особенно для личных съёмок).",
+        desc: "Фиксируем условия. Приватность по умолчанию.",
       },
       {
         icon: Layers,
         title: "Форматы для любых площадок",
-        desc: "Instagram / сайт / маркетплейсы / резюме — подготовим кадры под нужные пропорции.",
+        desc: "Готовим форматы для соцсетей, сайта и маркетплейсов.",
       },
     ],
     [],
@@ -488,22 +492,19 @@ export default function PhotoOnDemandLanding() {
       {
         name: "Анна К.",
         role: "Маркетолог",
-        quote:
-          "Наконец-то фото, которые выглядят дорого и естественно. Ретушь супер-аккуратная — ни одного “перефотошопа”.",
+        quote: "Фото выглядят дорого и естественно. Очень аккуратная ретушь.",
         rating: 5,
       },
       {
         name: "Олег С.",
         role: "Предприниматель",
-        quote:
-          "Собрали референсы, за час отстреляли весь контент для сайта и соцсетей. Скорость и качество — топ.",
+        quote: "За час закрыли контент для сайта и соцсетей. Быстро и качественно.",
         rating: 5,
       },
       {
         name: "Екатерина М.",
         role: "Владелица бренда",
-        quote:
-          "Предметка получилась “вкусной”: свет, фактура, цвета — всё как в премиум-каталоге. Продажи реально выросли.",
+        quote: "Предметка вышла как в премиум-каталоге. Продажи выросли.",
         rating: 5,
       },
     ],
@@ -514,27 +515,27 @@ export default function PhotoOnDemandLanding() {
     () => [
       {
         q: "Сколько времени занимает съёмка?",
-        a: "Обычно 60–90 минут. Для предметки и командных съёмок время зависит от количества сцен и образов.",
+        a: "Обычно 60–90 минут. Для предметки и командных съёмок — по объёму.",
       },
       {
         q: "Можно ли выбрать стиль и референсы?",
-        a: "Да. Мы можем предложить moodboard, либо собрать его вместе на основе ваших примеров (Pinterest/Dribbble/Instagram).",
+        a: "Да. Делаем moodboard по вашим примерам или собираем его вместе.",
       },
       {
         q: "Что входит в ретушь?",
-        a: "Цвет, кожа, светотень, чистка деталей, лёгкая пластика при необходимости и подготовка под форматы площадок.",
+        a: "Цвет, кожа, детали, светотень и экспорт под нужные форматы.",
       },
       {
         q: "Есть ли срочная обработка?",
-        a: "Да, при наличии слотов. Срочность зависит от объёма и выбранного тарифа — уточним в переписке.",
+        a: "Да, если есть слот. Срок зависит от объёма и тарифа.",
       },
       {
         q: "Работаете по договору?",
-        a: "Да. Фиксируем объём, сроки и условия. Конфиденциальность — по запросу или по умолчанию для личных съёмок.",
+        a: "Да. Фиксируем объём, сроки и условия.",
       },
       {
         q: "Где проходит съёмка?",
-        a: "Студия, город, офис, шоурум или у вас. Локацию подбираем под концепт и свет.",
+        a: "Студия, город, офис или шоурум. Локацию подбираем под задачу.",
       },
     ],
     [],
@@ -586,6 +587,11 @@ export default function PhotoOnDemandLanding() {
       footnote: isYear ? "С учётом скидки 20% на год" : "Можно перейти на год и сэкономить 20%",
     }));
   }, [billing]);
+  const selectedPlanData = useMemo(
+    () => plans.find((p) => p.name === selectedPlan) || plans[0],
+    [plans, selectedPlan],
+  );
+  const accessDays = billing === "year" ? 365 : 30;
 
   const [openFaq, setOpenFaq] = useState(0);
 
@@ -614,7 +620,7 @@ export default function PhotoOnDemandLanding() {
   }, []);
 
   const submitLead = useCallback(
-    async ({ name, email, phone, shootType, message }) => {
+    async ({ name, email, phone, shootType, message, plan }) => {
       setLeadStatus("sending");
       try {
         const body = encode({
@@ -623,7 +629,7 @@ export default function PhotoOnDemandLanding() {
           email,
           phone,
           shootType,
-          message,
+          message: [message, plan ? `Тариф: ${plan}` : null].filter(Boolean).join("\n\n"),
         });
         const res = await fetch("/", {
           method: "POST",
@@ -1009,7 +1015,7 @@ export default function PhotoOnDemandLanding() {
               <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5", "border border-[color:var(--border)] bg-[color:var(--card-bg)]", heroClasses.chips)}>
                 <BadgeCheck className="h-4 w-4 text-white/85" />
                 <span className="text-xs sm:text-sm text-white/75">
-                  Съёмка + ретушь + форматы под площадки — в одном процессе
+                  Съёмка и ретушь в одном процессе
                 </span>
               </div>
 
@@ -1023,8 +1029,7 @@ export default function PhotoOnDemandLanding() {
               </h1>
 
               <p className={cn("mt-5 text-base sm:text-lg text-white/70 max-w-2xl", heroClasses.p)}>
-                Мы превращаем задачу в сильный визуал: концепт, свет, позинг, ретушь и аккуратная подача.
-                Идеально для личного бренда, бизнеса, каталога или контент-плана.
+                Концепт, съёмка и ретушь под вашу задачу. Коротко, понятно, результативно.
               </p>
 
               <div className={cn("mt-7 flex flex-col sm:flex-row gap-3 sm:items-center", heroClasses.ctas)}>
@@ -1207,7 +1212,7 @@ export default function PhotoOnDemandLanding() {
               из реальных съёмок.
             </h2>
             <p className="mt-3 text-white/70 max-w-2xl">
-              Нажмите на фото — откроется просмотр. Если тут пусто, просто переместите ваши файлы в{" "}
+              Нажмите на фото для просмотра. Если пусто — переместите файлы в{" "}
               <span className="text-white/85 font-semibold">`src/assets/portfolio/`</span>.
             </p>
           </div>
@@ -1315,7 +1320,7 @@ export default function PhotoOnDemandLanding() {
                 .
               </h2>
               <p className="mt-3 text-white/70 max-w-2xl">
-                Мы делаем не просто “фото”, а цельную визуальную систему: от идеи до готовых форматов под ваши площадки.
+                От идеи до готовых форматов. Всё в одном процессе.
               </p>
             </div>
             <button
@@ -1388,7 +1393,7 @@ export default function PhotoOnDemandLanding() {
               <div className="text-xs sm:text-sm text-white/60">Цифры</div>
               <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">Результат в метриках.</h2>
               <p className="mt-3 text-white/70 max-w-2xl">
-                Мы измеряем качество не словами, а стабильностью процесса: скорость, повторные съёмки и довольные клиенты.
+                Коротко о результатах: скорость, качество, повторные заказы.
               </p>
             </div>
           </div>
@@ -1433,7 +1438,7 @@ export default function PhotoOnDemandLanding() {
               .
             </h2>
             <p className="mt-3 text-white/70 max-w-2xl">
-              Чёткий процесс = предсказуемый результат. Никакого хаоса, только вкус, свет и аккуратная пост-обработка.
+              Простой процесс в 3 шага: бриф, съёмка, финал.
             </p>
           </div>
         </div>
@@ -1449,19 +1454,19 @@ export default function PhotoOnDemandLanding() {
                 n: "01",
                 icon: Sparkles,
                 title: "Концепт",
-                desc: "Обсуждаем задачу, собираем референсы, утверждаем стиль и локацию.",
+                desc: "Короткий бриф, референсы и план съёмки.",
               },
               {
                 n: "02",
                 icon: Camera,
                 title: "Съёмка",
-                desc: "Ставим свет, ведём по позингу, быстро выстраиваем кадры под ваши цели.",
+                desc: "Ставим свет, помогаем с позингом, снимаем под цель.",
               },
               {
                 n: "03",
                 icon: Wand2,
                 title: "Ретушь + выдача",
-                desc: "Цвет, кожа, детали + форматы под площадки. Отдаём красиво и вовремя.",
+                desc: "Ретушь и экспорт под площадки. Отдаём в срок.",
               },
             ].map((st) => {
               const Icon = st.icon;
@@ -1506,7 +1511,7 @@ export default function PhotoOnDemandLanding() {
               </span>
               .
             </h2>
-            <p className="mt-3 text-white/70 max-w-2xl">Живые впечатления о процессе, ретуши и “дорогом” результате.</p>
+            <p className="mt-3 text-white/70 max-w-2xl">Коротко о том, что говорят клиенты.</p>
           </div>
         </div>
 
@@ -1516,7 +1521,7 @@ export default function PhotoOnDemandLanding() {
         </div>
       </Section>
 
-      {/* PRICING */}
+      {/* PRICING — в стиле nanomix.ai */}
       <Section id="pricing" className="py-20 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
@@ -1529,7 +1534,7 @@ export default function PhotoOnDemandLanding() {
               .
             </h2>
             <p className="mt-3 text-white/70 max-w-2xl">
-              Переключите месяц/год — на год действует скидка 20%. Все тарифы включают аккуратную ретушь и подготовку форматов.
+              Выберите тариф: месяц или год (скидка 20%).
             </p>
           </div>
 
@@ -1557,65 +1562,141 @@ export default function PhotoOnDemandLanding() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-4 lg:grid-cols-3">
-          {plans.map((p) => (
-            <div
-              key={p.name}
-              className={cn(
-                "relative rounded-3xl border backdrop-blur-xl p-6",
-                p.highlight
-                  ? "border-white/20 bg-[color:var(--card-bg)] scale-[1.01] lg:scale-[1.03]"
-                  : "border-[color:var(--border)] bg-[color:var(--card-bg)]",
-                "transition-transform card-hover hover:scale-[1.03] hover:-translate-y-1",
-              )}
-            >
-              {p.highlight && (
-                <div className="absolute -top-3 left-6">
-                  <div className="px-3 py-1 rounded-full text-xs font-semibold text-black bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)]">
-                    {p.badge}
-                  </div>
-                </div>
-              )}
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="text-base font-semibold text-white/90">{p.name}</div>
-                  <div className="mt-1 text-sm text-white/65">{p.desc}</div>
-                </div>
-              </div>
-              <div className="mt-6 flex items-end gap-2">
-                <div className="text-4xl font-extrabold tracking-tight">
-                  <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
-                    {p.priceNow.toLocaleString("ru-RU")}
-                  </span>
-                </div>
-                <div className="text-sm text-white/60 mb-1">₽ {p.priceLabel}</div>
-              </div>
-              <div className="mt-2 text-xs text-white/50">{p.footnote}</div>
-
-              <div className="mt-6 grid gap-2">
-                {p.features.map((f) => (
-                  <div key={f} className="flex items-start gap-2 text-sm text-white/75">
-                    <Check className="h-4 w-4 mt-0.5 text-white/85" />
-                    <span>{f}</span>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => scrollToId("cta")}
-                className={cn(
-                  "mt-7 h-12 w-full min-h-[44px] rounded-2xl font-semibold text-sm",
-                  p.highlight
-                    ? "bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] text-black btn-glow hover:scale-[1.03]"
-                    : "border border-[color:var(--border)] bg-white/0 text-white/90 hover:bg-white/5 hover:scale-[1.03]",
-                  "transition-transform active:scale-[1.01]",
-                )}
-              >
-                Забронировать
-              </button>
+        {/* Единый блок в стиле nanomix — карточки тарифов */}
+        <div className="mt-10 rounded-[2rem] border border-white/15 bg-[#0b0b12]/90 backdrop-blur-xl overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_24px_80px_rgba(0,0,0,0.4)]">
+          <div className="p-6 sm:p-8 lg:p-10">
+            <div className="grid gap-4 lg:grid-cols-3">
+              {plans.map((p) => {
+                const isSelected = selectedPlan === p.name;
+                return (
+                  <button
+                    key={p.name}
+                    type="button"
+                    onClick={() => setSelectedPlan(p.name)}
+                    className={cn(
+                      "relative rounded-2xl border backdrop-blur-xl p-6 text-left transition-all",
+                      isSelected
+                        ? "border-[var(--accent-to)] ring-2 ring-[var(--accent-to)]/30 bg-white/[0.08]"
+                        : "border-[color:var(--border)] bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20",
+                      "card-hover",
+                    )}
+                  >
+                    {p.highlight && (
+                      <div className="absolute -top-2.5 left-5">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-black bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)]">
+                          {p.badge}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-base font-semibold text-white/90">{p.name}</div>
+                      {isSelected && (
+                        <div className="h-5 w-5 rounded-full border-2 border-[var(--accent-to)] bg-[var(--accent-to)] grid place-items-center">
+                          <Check className="h-3 w-3 text-black" strokeWidth={3} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-1 text-sm text-white/60">{p.desc}</div>
+                    <div className="mt-5 flex items-baseline gap-2">
+                      <span className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                        {p.priceNow.toLocaleString("ru-RU")}
+                      </span>
+                      <span className="text-sm text-white/55">₽ {p.priceLabel}</span>
+                    </div>
+                    <div className="mt-1 text-xs text-white/45">{p.footnote}</div>
+                    <div className="mt-5 grid gap-2">
+                      {p.features.map((f) => (
+                        <div key={f} className="flex items-start gap-2 text-sm text-white/70">
+                          <Check className="h-4 w-4 mt-0.5 shrink-0 text-white/60" />
+                          <span>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          ))}
+
+            {/* Чекбоксы и CTA в стиле nanomix */}
+            <div className="mt-8 sm:mt-10 pt-8 border-t border-white/10">
+              <div className="mb-6 sm:mb-7 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 sm:px-5 sm:py-4 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[11px] uppercase tracking-[0.14em] text-white/45">Доступ</div>
+                  <div className="mt-1 text-lg sm:text-2xl font-extrabold text-white">
+                    {accessDays} <span className="text-white/65 font-semibold">дней доступа</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[11px] text-white/45">Тариф</div>
+                  <div className="mt-1 text-sm sm:text-base font-semibold text-white/90">{selectedPlanData?.name}</div>
+                  <div className="text-xs text-white/55">
+                    {selectedPlanData?.priceNow?.toLocaleString("ru-RU")} ₽ {selectedPlanData?.priceLabel}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-white/30 bg-white/5 text-[var(--accent-to)] focus:ring-[var(--accent-to)]/50"
+                  />
+                  <span className="text-sm text-white/70 group-hover:text-white/85">
+                    Я принимаю публичный договор (договор оферты).
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={privacyAccepted}
+                    onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-white/30 bg-white/5 text-[var(--accent-to)] focus:ring-[var(--accent-to)]/50"
+                  />
+                  <span className="text-sm text-white/70 group-hover:text-white/85">
+                    Я даю согласие на обработку моих персональных данных.
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer group sm:col-span-2 lg:col-span-1">
+                  <input
+                    type="checkbox"
+                    checked={licenseAccepted}
+                    onChange={(e) => setLicenseAccepted(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-white/30 bg-white/5 text-[var(--accent-to)] focus:ring-[var(--accent-to)]/50"
+                  />
+                  <span className="text-sm text-white/70 group-hover:text-white/85">
+                    Я подтверждаю, что ознакомился с лицензией и техническими требованиями.
+                  </span>
+                </label>
+              </div>
+
+              <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (termsAccepted && privacyAccepted && licenseAccepted) scrollToId("cta");
+                  }}
+                  disabled={!termsAccepted || !privacyAccepted || !licenseAccepted}
+                  className={cn(
+                    "h-14 px-8 rounded-2xl font-semibold text-base",
+                    "bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] text-black",
+                    "transition-all btn-glow",
+                    termsAccepted && privacyAccepted && licenseAccepted
+                      ? "hover:scale-[1.02] active:scale-[1.01] cursor-pointer"
+                      : "opacity-50 cursor-not-allowed",
+                  )}
+                >
+                  Перейти к оплате
+                </button>
+                <p className="text-xs text-white/50 sm:self-center">
+                  {termsAccepted && privacyAccepted && licenseAccepted
+                    ? "Выбран тариф: " + selectedPlan + ". Нажмите кнопку для оформления заявки."
+                    : "Чтобы продолжить, отметьте все согласия ниже."}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </Section>
 
@@ -1631,7 +1712,7 @@ export default function PhotoOnDemandLanding() {
               </span>{" "}
               без сомнений.
             </h2>
-            <p className="mt-3 text-white/70 max-w-2xl">Если не нашли вопрос — напишите, подскажем и подберём формат.</p>
+            <p className="mt-3 text-white/70 max-w-2xl">Если не нашли ответ — просто напишите нам.</p>
           </div>
         </div>
 
@@ -1669,15 +1750,22 @@ export default function PhotoOnDemandLanding() {
 
           <div className="relative grid gap-6 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full bg-black/20 px-3 py-1.5 text-xs font-semibold">
-                <Sparkles className="h-4 w-4" />
-                <span>Подберём концепт под вашу задачу</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 rounded-full bg-black/20 px-3 py-1.5 text-xs font-semibold">
+                  <Sparkles className="h-4 w-4" />
+                  <span>Подберём формат под задачу</span>
+                </div>
+                {selectedPlan && (
+                  <span className="rounded-full border border-black/20 bg-black/15 px-3 py-1.5 text-xs font-medium">
+                    Выбран тариф: {selectedPlan}
+                  </span>
+                )}
               </div>
               <h3 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
-                Хотите кадры, которые продают и запоминаются?
+                Нужны кадры, которые продают?
               </h3>
               <p className="mt-3 text-black/80 max-w-xl">
-                Оставьте email — пришлём вопросы для брифа и предложим 2–3 концепта с референсами.
+                Оставьте контакты — пришлём бриф и предложим концепт.
               </p>
             </div>
 
@@ -1695,6 +1783,7 @@ export default function PhotoOnDemandLanding() {
                     phone: leadPhone.trim(),
                     shootType: leadShootType,
                     message: leadMessage.trim(),
+                    plan: selectedPlan,
                   });
                 }}
                 name="lead"
@@ -1702,6 +1791,7 @@ export default function PhotoOnDemandLanding() {
                 netlify-honeypot="bot-field"
               >
                 <input type="hidden" name="form-name" value="lead" />
+                <input type="hidden" name="plan" value={selectedPlan} />
                 <p className="hidden">
                   <label>
                     Don’t fill this out: <input name="bot-field" />
@@ -1711,7 +1801,7 @@ export default function PhotoOnDemandLanding() {
                   <div className="grid gap-3 sm:grid-cols-2">
                     <input
                       type="text"
-                      placeholder="Имя (необязательно)"
+                      placeholder="Имя"
                       name="name"
                       value={leadName}
                       onChange={(e) => setLeadName(e.target.value)}
@@ -1724,7 +1814,7 @@ export default function PhotoOnDemandLanding() {
                     <input
                       type="tel"
                       inputMode="tel"
-                      placeholder="Телефон (необязательно)"
+                      placeholder="Телефон"
                       name="phone"
                       value={leadPhone}
                       onChange={(e) => setLeadPhone(e.target.value)}
@@ -1786,7 +1876,7 @@ export default function PhotoOnDemandLanding() {
                     value={leadMessage}
                     onChange={(e) => setLeadMessage(e.target.value)}
                     rows={3}
-                    placeholder="Комментарий (дата, город, примечания) — необязательно"
+                    placeholder="Комментарий (дата, город, задача)"
                     className={cn(
                       "min-h-[96px] w-full rounded-2xl px-4 py-3",
                       "bg-white/80 text-black placeholder:text-black/50",
@@ -1803,7 +1893,7 @@ export default function PhotoOnDemandLanding() {
                       Не удалось отправить. Попробуйте ещё раз (или обновите страницу).
                     </span>
                   ) : (
-                    <span className="text-black/70">Никакого спама. Только бриф и идеи. Можно отписаться в любой момент.</span>
+                    <span className="text-black/70">Без спама. Только по вашей заявке.</span>
                   )}
                 </div>
               </form>
@@ -1834,7 +1924,7 @@ export default function PhotoOnDemandLanding() {
                 <div className="font-semibold tracking-tight">ФотоНаЗаказ</div>
               </div>
               <p className="mt-4 text-sm text-white/65 max-w-sm">
-                Премиальные съёмки и ретушь. Концепт, свет, позинг, обработка и форматы под площадки — всё в одном сервисе.
+                Премиальные съёмки и ретушь. Всё в одном сервисе.
               </p>
               <div className="mt-5 flex items-center gap-2 text-white/70">
                 {[
