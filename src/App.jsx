@@ -411,6 +411,8 @@ export default function PhotoOnDemandLanding() {
     () => [
       { id: "features", label: "Преимущества" },
       { id: "portfolio", label: "Работы" },
+      { id: "audience", label: "Для кого" },
+      { id: "services", label: "Услуги" },
       { id: "stats", label: "Цифры" },
       { id: "how", label: "Как это работает" },
       { id: "testimonials", label: "Отзывы" },
@@ -506,6 +508,58 @@ export default function PhotoOnDemandLanding() {
         role: "Владелица бренда",
         quote: "Предметка вышла как в премиум-каталоге. Продажи выросли.",
         rating: 5,
+      },
+    ],
+    [],
+  );
+
+  const audienceGroups = useMemo(
+    () => [
+      {
+        icon: Camera,
+        title: "Фотографы",
+        desc: "Ускоряют отдачу материалов и закрывают больше заказов без потери качества.",
+      },
+      {
+        icon: Wand2,
+        title: "Ретушёры",
+        desc: "Делают сложную предметную и портретную обработку быстрее и стабильнее.",
+      },
+      {
+        icon: Sparkles,
+        title: "Дизайнеры и SMM",
+        desc: "Быстро получают визуалы под соцсети, сайт, рекламу и маркетплейсы.",
+      },
+      {
+        icon: Layers,
+        title: "Бренды и бизнес",
+        desc: "Собирают единую визуальную систему для каталога, карточек и кампаний.",
+      },
+    ],
+    [],
+  );
+
+  const serviceModels = useMemo(
+    () => [
+      {
+        badge: "Ретушь",
+        title: "Портрет и beauty",
+        desc: "Точная ретушь кожи, света и цвета с естественным результатом.",
+      },
+      {
+        badge: "Каталог",
+        title: "Предметка и e-commerce",
+        desc: "Чистый коммерческий стиль для карточек товара и витрин.",
+      },
+      {
+        badge: "Контент",
+        title: "Бренд и соцсети",
+        desc: "Серии кадров в едином стиле под публикации и рекламные креативы.",
+      },
+      {
+        badge: "Премиум",
+        title: "Campaign-ready",
+        desc: "Полный цикл: идея, съёмка, ретушь и выдача в нужных форматах.",
       },
     ],
     [],
@@ -1376,6 +1430,46 @@ export default function PhotoOnDemandLanding() {
         </div>
       </section>
 
+      {/* AUDIENCE */}
+      <Section id="audience" className="py-20 sm:py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div className="text-xs sm:text-sm text-white/60">Для кого</div>
+            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Подходит специалистам, которым нужен{" "}
+              <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                быстрый и дорогой
+              </span>{" "}
+              визуал.
+            </h2>
+            <p className="mt-3 text-white/70 max-w-2xl">
+              Съёмка и обработка под реальную бизнес-задачу, а не просто красивые кадры.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {audienceGroups.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.title}
+                className={cn(
+                  "rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-6",
+                  "transition-transform card-hover hover:scale-[1.03] hover:-translate-y-1",
+                )}
+              >
+                <div className="h-10 w-10 rounded-2xl border border-[color:var(--border)] bg-white/5 grid place-items-center">
+                  <Icon className="h-5 w-5 text-white/90" />
+                </div>
+                <div className="mt-4 text-base font-semibold text-white/90">{item.title}</div>
+                <p className="mt-2 text-sm text-white/70 leading-relaxed">{item.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+      </Section>
+
       {/* STATS */}
       <section
         id="stats"
@@ -1496,6 +1590,43 @@ export default function PhotoOnDemandLanding() {
               );
             })}
           </div>
+        </div>
+      </Section>
+
+      {/* SERVICES */}
+      <Section id="services" className="py-20 sm:py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div className="text-xs sm:text-sm text-white/60">Услуги</div>
+            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Форматы съёмки и ретуши{" "}
+              <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                для любых задач
+              </span>
+              .
+            </h2>
+            <p className="mt-3 text-white/70 max-w-2xl">
+              Выбирайте направление, а мы подберём точный сетап по срокам, стилю и целям.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          {serviceModels.map((item) => (
+            <div
+              key={item.title}
+              className={cn(
+                "rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-6",
+                "transition-transform card-hover hover:scale-[1.02] hover:-translate-y-1",
+              )}
+            >
+              <div className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-white/70">
+                {item.badge}
+              </div>
+              <div className="mt-4 text-lg font-semibold text-white/90">{item.title}</div>
+              <p className="mt-2 text-sm text-white/70">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </Section>
 
