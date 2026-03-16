@@ -1422,7 +1422,7 @@ export default function PhotoOnDemandLanding() {
                     beforeUrl={cat.beforeUrl}
                     afterUrl={cat.afterUrl}
                     size="large"
-                    fit={cat.id === "portraits" ? "contain" : "cover"}
+                    fit="cover"
                   />
                 ) : (
                   <div className="aspect-[4/3] rounded-2xl border border-dashed border-white/20 flex items-center justify-center text-sm text-white/50">
