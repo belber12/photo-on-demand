@@ -110,6 +110,12 @@ function pickBeforeAfter(portfolio) {
   return { beforeUrl: null, afterUrl: null };
 }
 
+const BEFORE_AFTER_CATEGORIES = [
+  { id: "portraits", label: "Портреты", match: /портрет|portrait/i },
+  { id: "weddings", label: "Свадьбы", match: /свадьб|wedding/i },
+  { id: "products", label: "Предметы", match: /предмет|ea888|стэк|product/i },
+];
+
 function BeforeAfterSlider({ beforeUrl, afterUrl }) {
   const wrapRef = useRef(null);
   const [pos, setPos] = useState(0.52); // 0..1
@@ -416,6 +422,7 @@ export default function PhotoOnDemandLanding() {
   const navItems = useMemo(
     () => [
       { id: "features", label: "Преимущества" },
+      { id: "before-after", label: "До и после" },
       { id: "portfolio", label: "Работы" },
       { id: "tools", label: "Инструменты" },
       { id: "audience", label: "Для кого" },
@@ -460,6 +467,31 @@ export default function PhotoOnDemandLanding() {
     if (postBefore?.url && postAfter?.url) return { beforeUrl: postBefore.url, afterUrl: postAfter.url };
     return pickBeforeAfter(effectivePortfolio);
   }, [allPortfolio, effectivePortfolio]);
+
+  const beforeAfterByCategory = useMemo(() => {
+    return BEFORE_AFTER_CATEGORIES.map((cat) => {
+      const subset = allPortfolio.filter((p) => cat.match.test(p.path));
+      return { ...cat, ...pickBeforeAfter(subset) };
+    });
+  }, [allPortfolio]);
+
+  const [portfolioFilter, setPortfolioFilter] = useState("all");
+  const portfolioCategories = useMemo(
+    () => [
+      { id: "all", label: "Все", test: () => true },
+      { id: "portraits", label: "Портреты", test: (path) => /портрет|portrait|пост/i.test(path) },
+      { id: "weddings", label: "Свадьбы", test: (path) => /свадьб|wedding/i.test(path) },
+      { id: "products", label: "Предметы", test: (path) => /предмет|ea888|стэк|product/i.test(path) },
+    ],
+    [],
+  );
+  const filteredPortfolio = useMemo(() => {
+    const cat = portfolioCategories.find((c) => c.id === portfolioFilter);
+    if (!cat) return effectivePortfolio;
+    return effectivePortfolio.filter((p) => cat.test(p.path));
+  }, [effectivePortfolio, portfolioFilter, portfolioCategories]);
+  const filteredRibbon = useMemo(() => filteredPortfolio.slice(0, 12), [filteredPortfolio]);
+  const filteredGrid = useMemo(() => filteredPortfolio.slice(0, 6), [filteredPortfolio]);
 
   const imageBoostClass = "saturate-[1.14] contrast-[1.08] brightness-[1.04]";
 
@@ -653,6 +685,10 @@ export default function PhotoOnDemandLanding() {
       {
         q: "Где проходит съёмка?",
         a: "Студия, город, офис или шоурум. Локацию подбираем под задачу.",
+      },
+      {
+        q: "Что такое превью?",
+        a: "Первые отобранные кадры после съёмки — вы смотрите, выбираете лучшие, мы доводим их до финала.",
       },
     ],
     [],
@@ -1344,6 +1380,50 @@ export default function PhotoOnDemandLanding() {
         </div>
       </div>
 
+      {/* ДО И ПОСЛЕ по категориям */}
+      <Section id="before-after" className="py-20 sm:py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div className="text-xs sm:text-sm text-white/60">Образцы</div>
+            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              До и после{" "}
+              <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                по категориям
+              </span>
+              .
+            </h2>
+            <p className="mt-3 text-white/70 max-w-2xl">
+              Портреты, свадьбы, предметы. Добавьте пары до/после в папки{" "}
+              <span className="text-white/85 font-semibold">Портреты</span>,{" "}
+              <span className="text-white/85 font-semibold">Свадьбы</span>,{" "}
+              <span className="text-white/85 font-semibold">Предметы</span>.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {beforeAfterByCategory.map((cat) => (
+            <div
+              key={cat.id}
+              className="rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl overflow-hidden"
+            >
+              <div className="px-4 py-3 text-sm font-semibold text-white/90 border-b border-[color:var(--border)]">
+                {cat.label}
+              </div>
+              <div className="p-4">
+                {cat.beforeUrl && cat.afterUrl ? (
+                  <BeforeAfterSlider beforeUrl={cat.beforeUrl} afterUrl={cat.afterUrl} />
+                ) : (
+                  <div className="aspect-[4/3] rounded-2xl border border-dashed border-white/20 flex items-center justify-center text-sm text-white/50">
+                    Добавьте до.jpg и после.jpg в папку {cat.label}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* PORTFOLIO */}
       <Section id="portfolio" className="py-20 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
@@ -1357,8 +1437,7 @@ export default function PhotoOnDemandLanding() {
               из реальных съёмок.
             </h2>
             <p className="mt-3 text-white/70 max-w-2xl">
-              Нажмите на фото для просмотра. Если пусто — переместите файлы в{" "}
-              <span className="text-white/85 font-semibold">`src/assets/portfolio/`</span>.
+              Нажмите на фото для просмотра. Фильтр по категориям.
             </p>
           </div>
           <button
@@ -1374,6 +1453,26 @@ export default function PhotoOnDemandLanding() {
           </button>
         </div>
 
+        {effectivePortfolio.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {portfolioCategories.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setPortfolioFilter(c.id)}
+                className={cn(
+                  "px-3 py-1.5 rounded-xl text-sm font-medium transition-colors",
+                  portfolioFilter === c.id
+                    ? "bg-white/15 text-white border border-white/25"
+                    : "text-white/70 hover:text-white border border-[color:var(--border)] hover:border-white/20",
+                )}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {effectivePortfolio.length === 0 ? (
           <div className="mt-10 rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-6 text-white/70">
             <div className="text-sm font-semibold text-white/90">Фото пока не подключены.</div>
@@ -1381,6 +1480,11 @@ export default function PhotoOnDemandLanding() {
               Переместите вашу папку с фото сюда: <span className="text-white/90 font-semibold">`src/assets/portfolio/`</span>.
               Можно как угодно называть файлы и подпапки — сайт подхватит автоматически.
             </div>
+          </div>
+        ) : filteredPortfolio.length === 0 ? (
+          <div className="mt-10 rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-6 text-white/70">
+            <div className="text-sm font-semibold text-white/90">В этой категории пока нет фото.</div>
+            <div className="mt-2 text-sm">Выберите другую категорию или добавьте фото в соответствующую папку.</div>
           </div>
         ) : (
           <>
@@ -1391,13 +1495,13 @@ export default function PhotoOnDemandLanding() {
               </div>
               <div className="relative">
                 <div className="marquee gap-3 px-5 pb-5">
-                  {[...ribbonPortfolio, ...ribbonPortfolio]
-                    .slice(0, Math.min(24, ribbonPortfolio.length * 2))
+                  {[...filteredRibbon, ...filteredRibbon]
+                    .slice(0, Math.min(24, filteredRibbon.length * 2))
                     .map((p, idx) => (
                     <button
                       key={`${p.path}-${idx}`}
                       type="button"
-                      onClick={() => setLightboxIndex(idx % ribbonPortfolio.length)}
+                      onClick={() => setLightboxIndex(Math.max(0, effectivePortfolio.findIndex((x) => x.path === p.path)))}
                       className="relative h-28 w-44 sm:h-32 sm:w-52 rounded-2xl overflow-hidden border border-white/10 bg-black/20 shrink-0 transition-transform hover:scale-[1.03]"
                       aria-label="Открыть фото"
                     >
@@ -1414,7 +1518,7 @@ export default function PhotoOnDemandLanding() {
             </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {gridPortfolio.map((p, idx) => (
+              {filteredGrid.map((p, idx) => (
                 <button
                   key={p.path}
                   type="button"
