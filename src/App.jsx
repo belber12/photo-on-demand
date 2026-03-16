@@ -485,9 +485,9 @@ export default function PhotoOnDemandLanding() {
   const portfolioCategories = useMemo(
     () => [
       { id: "all", label: "Все", test: () => true },
-      { id: "portraits", label: "Портреты", test: (path) => /портрет|portrait|пост/i.test(path) },
+      { id: "portraits", label: "Портреты", test: (path) => /портрет|portrait/i.test(path) },
       { id: "weddings", label: "Свадьбы", test: (path) => /свадьб|wedding/i.test(path) },
-      { id: "products", label: "Предметы", test: (path) => /предмет|ea888|стэк|product/i.test(path) },
+      { id: "products", label: "Предметы", test: (path) => /предмет|ea888|стэк|product|catalog/i.test(path) },
     ],
     [],
   );
