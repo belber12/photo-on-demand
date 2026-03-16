@@ -116,12 +116,12 @@ const BEFORE_AFTER_CATEGORIES = [
   { id: "products", label: "Предметы", match: /предмет|ea888|стэк|product/i },
 ];
 
-function BeforeAfterSlider({ beforeUrl, afterUrl, size = "compact" }) {
+function BeforeAfterSlider({ beforeUrl, afterUrl, size = "compact", fit = "cover" }) {
   const wrapRef = useRef(null);
   const [pos, setPos] = useState(0.52); // 0..1
   const [dragging, setDragging] = useState(false);
   const isLarge = size === "large";
-  const bgSize = isLarge ? "contain" : "cover";
+  const bgSize = fit === "contain" ? "contain" : "cover";
   const demoDoneRef = useRef(false);
   const rafRef = useRef(0);
   const { ref: inViewRef, inView: sliderInView } = useInView({ threshold: 0.65, rootMargin: "0px", once: true });
@@ -231,7 +231,7 @@ function BeforeAfterSlider({ beforeUrl, afterUrl, size = "compact" }) {
     <div
       ref={setRefs}
       className={cn(
-        "relative rounded-2xl overflow-hidden border border-[color:var(--border)] bg-black/20 select-none touch-none",
+        "relative rounded-2xl overflow-hidden border border-[color:var(--border)] bg-black/80 select-none touch-none",
         isLarge ? "aspect-[3/4] min-h-[220px] sm:min-h-[280px]" : "h-40 sm:h-48",
       )}
       onPointerDown={onPointerDown}
@@ -1407,7 +1407,7 @@ export default function PhotoOnDemandLanding() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {beforeAfterByCategory.map((cat) => (
             <div
               key={cat.id}
@@ -1418,7 +1418,12 @@ export default function PhotoOnDemandLanding() {
               </div>
               <div className="p-4">
                 {cat.beforeUrl && cat.afterUrl ? (
-                  <BeforeAfterSlider beforeUrl={cat.beforeUrl} afterUrl={cat.afterUrl} size="large" />
+                  <BeforeAfterSlider
+                    beforeUrl={cat.beforeUrl}
+                    afterUrl={cat.afterUrl}
+                    size="large"
+                    fit={cat.id === "portraits" ? "contain" : "cover"}
+                  />
                 ) : (
                   <div className="aspect-[4/3] rounded-2xl border border-dashed border-white/20 flex items-center justify-center text-sm text-white/50">
                     Добавьте до.jpg и после.jpg в папку {cat.label}
