@@ -447,10 +447,11 @@ export default function PhotoOnDemandLanding() {
   }, []);
 
   const effectivePortfolio = useMemo(() => {
-    // Clean feed: use one coherent set from `Пост`, without mixing product folders.
-    const postOnly = allPortfolio.filter((p) => p.path.includes("/assets/portfolio/Пост/"));
-    const postMain = postOnly.filter((p) => !p.path.endsWith("/до.jpg") && !p.path.endsWith("/после.jpg"));
-    return postMain.length > 0 ? postMain : allPortfolio;
+    // Исключаем только пары до/после из основного списка
+    const withoutBeforeAfter = allPortfolio.filter(
+      (p) => !/\/до\.(jpg|jpeg|png|webp)$/i.test(p.path) && !/\/после\.(jpg|jpeg|png|webp)$/i.test(p.path),
+    );
+    return withoutBeforeAfter;
   }, [allPortfolio]);
 
   const ribbonPortfolio = useMemo(() => effectivePortfolio.slice(0, 12), [effectivePortfolio]);
