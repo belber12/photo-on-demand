@@ -1,0 +1,4 @@
+# Product retouch pipeline: background removal + studio composite
+rembg>=2.0.50
+Pillow>=10.0.0
+numpy>=1.24.0

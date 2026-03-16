@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "AI Plugin Backend",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\Users\\Oleg\\Desktop\\nanomix-starter\\nanomix-starter-ascii\\backend\\src\\server.js"],
+      "port": 8787
+    },
+    {
+      "name": "Сайт фото на заказ",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    }
+  ]
+}

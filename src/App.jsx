@@ -4,6 +4,7 @@ import {
   Camera,
   Check,
   ChevronDown,
+  ChevronRight,
   Clock,
   Github,
   Image as ImageIcon,
@@ -11,12 +12,13 @@ import {
   Layers,
   Linkedin,
   Menu,
+  Package,
   ShieldCheck,
   Sparkles,
   Star,
   Send,
   ChevronLeft,
-  ChevronRight,
+  Terminal,
   Twitter,
   Wand2,
   X,
@@ -415,7 +417,7 @@ export default function PhotoOnDemandLanding() {
     () => [
       { id: "features", label: "Преимущества" },
       { id: "portfolio", label: "Работы" },
-      { id: "tool", label: "Инструмент" },
+      { id: "tools", label: "Инструменты" },
       { id: "audience", label: "Для кого" },
       { id: "services", label: "Услуги" },
       { id: "stats", label: "Цифры" },
@@ -1633,6 +1635,81 @@ export default function PhotoOnDemandLanding() {
           </div>
         </div>
       </section>
+
+      {/* TOOLS — плагин + product_retouch */}
+      <Section id="tools" className="py-20 sm:py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div>
+            <div className="text-xs sm:text-sm text-white/60">Инструменты</div>
+            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Плагин и скрипты для{" "}
+              <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+                вашего рабочего процесса
+              </span>
+              .
+            </h2>
+            <p className="mt-3 text-white/70 max-w-2xl">
+              AI-ретушь в Photoshop и автоматическая предметная ретушь — в одном репозитории.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          <a
+            href="https://github.com/belber12/photo-on-demand/tree/main/plugin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "group block rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl",
+              "p-6 transition-all duration-300 card-hover hover:scale-[1.02] hover:-translate-y-1",
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-2xl grid place-items-center border border-[color:var(--border)] bg-white/5 group-hover:border-white/25 transition-colors">
+                <Package className="h-6 w-6 text-white/90" />
+              </div>
+              <div>
+                <div className="text-base font-semibold text-white/90">Плагин Photoshop</div>
+                <div className="text-xs text-white/55">AI Ретушь</div>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-white/70 leading-relaxed">
+              Удаление фона, генерация, восстановление старых фото, раскраска ч/б — прямо в Photoshop.
+            </p>
+            <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--accent-to)]">
+              <span>Скачать плагин</span>
+              <ChevronRight className="h-4 w-4" />
+            </div>
+          </a>
+
+          <a
+            href="https://github.com/belber12/photo-on-demand/tree/main/product_retouch"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "group block rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl",
+              "p-6 transition-all duration-300 card-hover hover:scale-[1.02] hover:-translate-y-1",
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-2xl grid place-items-center border border-[color:var(--border)] bg-white/5 group-hover:border-white/25 transition-colors">
+                <Terminal className="h-6 w-6 text-white/90" />
+              </div>
+              <div>
+                <div className="text-base font-semibold text-white/90">Предметная ретушь</div>
+                <div className="text-xs text-white/55">Python CLI</div>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-white/70 leading-relaxed">
+              Удаление фона, студийный фон, мягкая тень — для e-commerce и каталогов.
+            </p>
+            <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--accent-to)]">
+              <span>Скрипт и инструкция</span>
+              <ChevronRight className="h-4 w-4" />
+            </div>
+          </a>
+        </div>
+      </Section>
 
       {/* AUDIENCE */}
       <Section id="audience" className="py-20 sm:py-24">

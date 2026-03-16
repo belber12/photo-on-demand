@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI Panel</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    <!-- Шапка с вкладками -->
+    <div class="panel-header">
+      <div class="panel-brand">AI Ретушь</div>
+      <div class="tabs">
+        <button class="tab active" data-tab="generate">Генерация</button>
+        <button class="tab" data-tab="retouch">Ретушь</button>
+        <button class="tab" data-tab="settings">Настройки</button>
+      </div>
+    </div>
+
+    <!-- Вкладка: Генерация -->
+    <div class="wrap tab-pane active" id="tab-generate">
+
+      <!-- Референс -->
+      <div class="section">
+        <div class="ref-preview" id="refPreviewWrap" style="display:none;">
+          <img id="refPreviewImg" src="" alt="референс" />
+          <button class="btn-clear-ref" id="clearRefBtn" title="Убрать референс">✕</button>
+        </div>
+        <div class="ref-buttons">
+          <button id="refFileBtn" class="btn-ref">📁 Файл</button>
+          <button id="refLayerBtn" class="btn-ref">🖼 Слой</button>
+        </div>
+      </div>
+
+      <!-- AI Сервис -->
+      <div class="section">
+        <div class="row-label">AI Сервис</div>
+        <select id="aiService">
+          <option value="replicate">Replicate</option>
+        </select>
+      </div>
+
+      <!-- Модель с навигацией -->
+      <div class="section">
+        <div class="row-label">Модель</div>
+        <div class="model-nav">
+          <button class="btn-nav" id="modelPrev">&#9664;</button>
+          <span class="model-nav-label" id="modelNavLabel">Flux Schnell</span>
+          <button class="btn-nav" id="modelNext">&#9654;</button>
+          <select id="modelSelect" style="display:none;">
+            <option value="black-forest-labs/flux-schnell">Flux Schnell (быстрый)</option>
+            <option value="black-forest-labs/flux-dev">Flux Dev</option>
+            <option value="stability-ai/sdxl">SDXL</option>
+            <option value="bytedance/sdxl-lightning-4step">SDXL Lightning</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Промт -->
+      <div class="section">
+        <div class="row-label">Промт</div>
+        <textarea id="prompt" rows="3" placeholder="Опиши изображение на английском..."></textarea>
+      </div>
+
+      <!-- Разрешение + Варианты -->
+      <div class="section">
+        <div class="row-two">
+          <div class="col">
+            <div class="row-label">Разрешение</div>
+            <select id="resolution">
+              <option value="512">512px</option>
+              <option value="1024" selected>1024px</option>
+              <option value="2048">2K</option>
+            </select>
+          </div>
+          <div class="col">
+            <div class="row-label">Вариантов</div>
+            <select id="variants">
+              <option value="1" selected>1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Соотношение сторон -->
+      <div class="section">
+        <div class="row-label">Соотношение сторон</div>
+        <select id="ratio">
+          <option value="1:1">1:1 — Квадрат</option>
+          <option value="16:9">16:9 — Горизонталь</option>
+          <option value="9:16">9:16 — Вертикаль</option>
+          <option value="4:3">4:3</option>
+          <option value="3:4">3:4</option>
+        </select>
+      </div>
+
+      <!-- Чекбоксы -->
+      <div class="section">
+        <div class="checkboxes-row">
+          <label class="cb-label"><input type="checkbox" id="cbQueue" /> Очередь</label>
+          <label class="cb-label"><input type="checkbox" id="cbNoImage" /> Без изображения</label>
+          <label class="cb-label"><input type="checkbox" id="cbGoogle" /> Google Поиск</label>
+        </div>
+      </div>
+
+      <!-- Кнопка Добавить -->
+      <div class="section section-action">
+        <button id="generateBtn" class="btn-add">⭐ Добавить</button>
+        <button id="autoAlignBtn" class="btn-autoalign">Авто-выровнять слои</button>
+        <div class="price-row" id="priceRow">~$0.003 за изображение</div>
+      </div>
+
+    </div>
+
+    <!-- Вкладка: Ретушь -->
+    <div class="wrap tab-pane" id="tab-retouch">
+
+      <div class="section">
+        <div class="section-title">Удалить фон</div>
+        <p class="hint">AI убирает фон с открытого документа.</p>
+        <button id="removeBgBtn" class="btn-primary">Удалить фон</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Восстановить старое фото</div>
+        <p class="hint">Убирает царапины, шум, восстанавливает детали и лица.</p>
+        <button id="restoreBtn" class="btn-primary">Восстановить</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Раскрасить ч/б фото</div>
+        <p class="hint">AI автоматически добавит цвет в чёрно-белое фото.</p>
+        <button id="colorizeBtn" class="btn-primary">Раскрасить</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Улучшить по инструкции</div>
+        <p class="hint">Редактирует фото по текстовой инструкции (на английском).</p>
+        <textarea id="enhancePrompt" rows="3" placeholder="Например: make colors vibrant, remove dust, clean product photo"></textarea>
+        <button id="enhanceBtn" class="btn-primary">Улучшить</button>
+      </div>
+
+    </div>
+
+    <!-- Вкладка: Настройки -->
+    <div class="wrap tab-pane" id="tab-settings">
+
+      <div class="section">
+        <div class="section-title">Подключение</div>
+        <label for="backendUrl">Backend URL</label>
+        <input id="backendUrl" type="text" value="http://localhost:8787" />
+        <button id="saveSettingsBtn" class="btn-secondary">Сохранить</button>
+      </div>
+
+    </div>
+
+    <!-- Попап полного текста -->
+    <div class="status-popup" id="statusPopup">
+      <button class="status-popup-close" id="statusPopupClose">✕</button>
+      <span id="statusPopupText"></span>
+    </div>
+
+    <!-- Строка статуса (кликни чтобы раскрыть) -->
+    <div class="status-bar" id="status" title="Нажми чтобы увидеть полный текст">Готов к работе</div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
