@@ -1305,6 +1305,7 @@ export default function PhotoOnDemandLanding() {
                                 <img
                                   src={idx === 0 ? beforeUrl : afterUrl}
                                   alt=""
+                                  loading="lazy"
                                   className="absolute inset-0 w-full h-full object-cover"
                                   aria-hidden="true"
                                 />
@@ -1516,7 +1517,7 @@ export default function PhotoOnDemandLanding() {
                       className="relative h-28 w-44 sm:h-32 sm:w-52 rounded-2xl overflow-hidden border border-white/10 bg-black/20 shrink-0 transition-transform hover:scale-[1.03]"
                       aria-label="Открыть фото"
                     >
-                      <img src={p.url} alt="" className={cn("absolute inset-0 w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
+                      <img src={p.url} alt="" loading="lazy" className={cn("absolute inset-0 w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true" />
                     </button>
                   ))}
@@ -1541,7 +1542,7 @@ export default function PhotoOnDemandLanding() {
                   aria-label="Открыть фото"
                 >
                   <div className="aspect-[4/3] bg-black/25">
-                    <img src={p.url} alt="" className={cn("w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
+                    <img src={p.url} alt="" loading="lazy" className={cn("w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-transparent" aria-hidden="true" />
                   <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-white/75">
