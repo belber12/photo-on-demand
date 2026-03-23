@@ -24,8 +24,11 @@ dist-ssr
 *.sw?
 **/*.psd
 
+.env
+.env.local
 # Backend
 backend/.env
 backend/node_modules
 # Local Netlify folder
 .netlify
+.vercel

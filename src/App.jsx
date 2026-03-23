@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
 import {
   BadgeCheck,
   Camera,
@@ -111,9 +112,9 @@ function pickBeforeAfter(portfolio) {
 }
 
 const BEFORE_AFTER_CATEGORIES = [
-  { id: "portraits", label: "Портреты", match: /портрет|portrait/i },
-  { id: "weddings", label: "Свадьбы", match: /свадьб|wedding/i },
-  { id: "products", label: "Предметы", match: /предмет|ea888|стэк|product/i },
+  { id: "portraits", label: "Портреты", match: /портрет|portrait|portrety/i },
+  { id: "weddings", label: "Свадьбы", match: /свадьб|wedding|svadby/i },
+  { id: "products", label: "Предметы", match: /предмет|ea888|стэк|product|predmety|stek/i },
 ];
 
 function BeforeAfterSlider({ beforeUrl, afterUrl, size = "compact", fit = "cover" }) {
@@ -441,20 +442,22 @@ export default function PhotoOnDemandLanding() {
     [],
   );
 
-  const allPortfolio = useMemo(() => {
-    // Drop photos into: src/assets/portfolio/**/*
-    // Works with any naming / subfolders; Vite will bundle and return URLs.
-    const mods = import.meta.glob("./assets/portfolio/**/*.{jpg,jpeg,png,webp,avif,gif}", { eager: true });
-    return Object.entries(mods)
-      .map(([path, mod]) => ({ path, url: getUrlFromGlobMod(mod) }))
-      .filter((x) => Boolean(x.url))
-      .sort((a, b) => a.path.localeCompare(b.path));
+  const [allPortfolio, setAllPortfolio] = useState([]);
+  const [portfolioLoading, setPortfolioLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPortfolioItems()
+      .then(setAllPortfolio)
+      .catch((err) => console.error("Failed to load portfolio:", err))
+      .finally(() => setPortfolioLoading(false));
   }, []);
 
   const effectivePortfolio = useMemo(() => {
-    // Исключаем только пары до/после из основного списка
+    // Исключаем пары до/после из основного списка (поддержка кириллицы и транслита)
     const withoutBeforeAfter = allPortfolio.filter(
-      (p) => !/\/до\.(jpg|jpeg|png|webp)$/i.test(p.path) && !/\/после\.(jpg|jpeg|png|webp)$/i.test(p.path),
+      (p) =>
+        !/\/(до|before)\.(jpg|jpeg|png|webp)$/i.test(p.path) &&
+        !/\/(после|after)\.(jpg|jpeg|png|webp)$/i.test(p.path),
     );
     return withoutBeforeAfter;
   }, [allPortfolio]);
@@ -463,13 +466,13 @@ export default function PhotoOnDemandLanding() {
   const gridPortfolio = useMemo(() => effectivePortfolio.slice(0, 6), [effectivePortfolio]);
 
   const heroBgUrl = useMemo(() => {
-    const preferredHero = effectivePortfolio.find((p) => p.path.includes("/assets/portfolio/Пост/1/"));
+    const preferredHero = effectivePortfolio.find((p) => p.path.includes("/assets/portfolio/post/1/"));
     return preferredHero?.url || effectivePortfolio[0]?.url || null;
   }, [effectivePortfolio]);
 
   const { beforeUrl, afterUrl } = useMemo(() => {
-    const postBefore = allPortfolio.find((p) => p.path.endsWith("/Пост/до.jpg"));
-    const postAfter = allPortfolio.find((p) => p.path.endsWith("/Пост/после.jpg"));
+    const postBefore = allPortfolio.find((p) => p.path.endsWith("/post/before.jpg"));
+    const postAfter = allPortfolio.find((p) => p.path.endsWith("/post/after.jpg"));
     if (postBefore?.url && postAfter?.url) return { beforeUrl: postBefore.url, afterUrl: postAfter.url };
     return pickBeforeAfter(effectivePortfolio);
   }, [allPortfolio, effectivePortfolio]);
@@ -485,9 +488,9 @@ export default function PhotoOnDemandLanding() {
   const portfolioCategories = useMemo(
     () => [
       { id: "all", label: "Все", test: () => true },
-      { id: "portraits", label: "Портреты", test: (path) => /портрет|portrait/i.test(path) },
-      { id: "weddings", label: "Свадьбы", test: (path) => /свадьб|wedding/i.test(path) },
-      { id: "products", label: "Предметы", test: (path) => /предмет|ea888|стэк|product|catalog/i.test(path) },
+      { id: "portraits", label: "Портреты", test: (path) => /портрет|portrait|portrety/i.test(path) },
+      { id: "weddings", label: "Свадьбы", test: (path) => /свадьб|wedding|svadby/i.test(path) },
+      { id: "products", label: "Предметы", test: (path) => /предмет|ea888|стэк|product|catalog|predmety|stek/i.test(path) },
     ],
     [],
   );
@@ -496,8 +499,37 @@ export default function PhotoOnDemandLanding() {
     if (!cat) return effectivePortfolio;
     return effectivePortfolio.filter((p) => cat.test(p.path));
   }, [effectivePortfolio, portfolioFilter, portfolioCategories]);
-  const filteredRibbon = useMemo(() => filteredPortfolio.slice(0, 12), [filteredPortfolio]);
-  const filteredGrid = useMemo(() => filteredPortfolio.slice(0, 6), [filteredPortfolio]);
+
+  // Для режима "все" — перемежаем по категориям чтобы показать разнообразие
+  const interleavedPortfolio = useMemo(() => {
+    const groups = [
+      effectivePortfolio.filter((p) => /portrety|portrait/i.test(p.path)),
+      effectivePortfolio.filter((p) => /svadby|wedding/i.test(p.path)),
+      effectivePortfolio.filter((p) => /predmety|catalog/i.test(p.path)),
+      effectivePortfolio.filter((p) => /post/i.test(p.path)),
+      effectivePortfolio.filter((p) => /ea888/i.test(p.path)),
+    ].filter((g) => g.length > 0);
+    const result = [];
+    let i = 0;
+    while (result.length < effectivePortfolio.length) {
+      let added = false;
+      for (const group of groups) {
+        if (i < group.length) { result.push(group[i]); added = true; }
+      }
+      if (!added) break;
+      i++;
+    }
+    return result;
+  }, [effectivePortfolio]);
+
+  const filteredRibbon = useMemo(
+    () => (portfolioFilter === "all" ? interleavedPortfolio : filteredPortfolio).slice(0, 12),
+    [filteredPortfolio, portfolioFilter, interleavedPortfolio],
+  );
+  const filteredGrid = useMemo(
+    () => (portfolioFilter === "all" ? interleavedPortfolio : filteredPortfolio).slice(0, 6),
+    [filteredPortfolio, portfolioFilter, interleavedPortfolio],
+  );
 
   const imageBoostClass = "saturate-[1.14] contrast-[1.08] brightness-[1.04]";
 
@@ -773,30 +805,19 @@ export default function PhotoOnDemandLanding() {
   }, [stickyDismissed, mobileOpen, footerInView, ctaPeekInView, scrollY]);
   const telegramUrl = "https://t.me/olegpmi";
 
-  const encode = useCallback((data) => {
-    return Object.keys(data)
-      .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-      .join("&");
-  }, []);
-
   const submitLead = useCallback(
     async ({ name, email, phone, shootType, message, plan }) => {
       setLeadStatus("sending");
       try {
-        const body = encode({
-          "form-name": "lead",
+        const { error } = await supabase.from("leads").insert({
           name,
           email,
           phone,
-          shootType,
-          message: [message, plan ? `Тариф: ${plan}` : null].filter(Boolean).join("\n\n"),
+          shoot_type: shootType,
+          message,
+          plan: plan || null,
         });
-        const res = await fetch("/", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body,
-        });
-        if (!res.ok) throw new Error(`Bad status: ${res.status}`);
+        if (error) throw error;
         setLeadStatus("success");
         setLeadName("");
         setLeadEmail("");
@@ -807,7 +828,7 @@ export default function PhotoOnDemandLanding() {
         setLeadStatus("error");
       }
     },
-    [encode],
+    [],
   );
 
   return (
@@ -1173,216 +1194,72 @@ export default function PhotoOnDemandLanding() {
           <img
             src={heroBgUrl}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.18] scale-[1.02]"
-            style={{ filter: "saturate(1.15) contrast(1.05)" }}
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.12]"
+            style={{ filter: "saturate(1.1) contrast(1.05)" }}
             aria-hidden="true"
           />
         )}
-        <div className="absolute inset-0 bg-grid opacity-70" aria-hidden="true" />
         <div className="absolute inset-0" aria-hidden="true" style={{
-          background:
-            "linear-gradient(180deg, rgba(8,8,15,0.82) 0%, rgba(8,8,15,0.78) 45%, rgba(8,8,15,0.92) 100%)",
-        }} />
-        <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full blur-3xl opacity-30" aria-hidden="true" style={{
-          background: "radial-gradient(circle at 30% 30%, var(--accent-from), transparent 60%)",
-          animation: "blobFloat 12s ease-in-out infinite",
-        }} />
-        <div className="absolute top-24 -right-24 h-96 w-96 rounded-full blur-3xl opacity-25" aria-hidden="true" style={{
-          background: "radial-gradient(circle at 30% 30%, var(--accent-to), transparent 60%)",
-          animation: "blobFloat 14s ease-in-out infinite",
-        }} />
-        <div className="absolute bottom-[-140px] left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full blur-3xl opacity-20" aria-hidden="true" style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(255,79,216,0.55), transparent 62%)",
-          animation: "blobFloat 16s ease-in-out infinite",
+          background: "linear-gradient(180deg, rgba(8,8,15,0.75) 0%, rgba(8,8,15,0.85) 100%)",
         }} />
 
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12 xl:px-16 pt-16 sm:pt-20 lg:pt-24 pb-16">
-          <div className="grid lg:grid-cols-12 gap-10 items-center">
-            <div className="lg:col-span-7">
-              <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5", "border border-[color:var(--border)] bg-[color:var(--card-bg)]", heroClasses.chips)}>
-                <BadgeCheck className="h-4 w-4 text-white/85" />
-                <span className="text-xs sm:text-sm text-white/75">
-                  Съёмка и ретушь в одном процессе
-                </span>
-              </div>
+        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pt-20 sm:pt-28 pb-20 sm:pb-28 text-center">
+          <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5 border border-[color:var(--border)] bg-[color:var(--card-bg)]", heroClasses.chips)}>
+            <BadgeCheck className="h-4 w-4 text-white/70" />
+            <span className="text-xs text-white/65">Съёмка и ретушь в одном процессе</span>
+          </div>
 
-              <h1 className={cn("mt-5 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05]", heroClasses.h1)}>
-                Фото на заказ, которые выглядят{" "}
-                <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
-                  дорого
-                </span>
-                , но остаются{" "}
-                <span className="text-white/90">вашими</span>.
-              </h1>
+          <h1 className={cn("mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]", heroClasses.h1)}>
+            Фото на заказ,{" "}
+            <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
+              которые работают
+            </span>
+          </h1>
 
-              <p className={cn("mt-5 text-base sm:text-lg text-white/70 max-w-2xl", heroClasses.p)}>
-                Концепт, съёмка и ретушь под вашу задачу. Коротко, понятно, результативно.
-              </p>
+          <p className={cn("mt-5 text-base sm:text-lg text-white/60 max-w-xl mx-auto", heroClasses.p)}>
+            Концепт, съёмка и ретушь под вашу задачу.
+          </p>
 
-              <div className={cn("mt-7 flex flex-col sm:flex-row gap-3 sm:items-center", heroClasses.ctas)}>
-                <button
-                  type="button"
-                  onClick={() => scrollToId("pricing")}
-                  className={cn(
-                    "h-12 min-h-[44px] px-5 rounded-2xl font-semibold text-sm sm:text-base text-black",
-                    "bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)]",
-                    "transition-transform btn-glow hover:scale-[1.05] active:scale-[1.01]",
-                  )}
-                >
-                  Выбрать тариф
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollToId("features")}
-                  className={cn(
-                    "h-12 min-h-[44px] px-5 rounded-2xl font-semibold text-sm sm:text-base",
-                    "border border-[color:var(--border)] bg-white/0 text-white/90",
-                    "hover:bg-white/5 transition-transform hover:scale-[1.05] active:scale-[1.01]",
-                  )}
-                >
-                  Посмотреть преимущества
-                </button>
-              </div>
+          <div className={cn("mt-8 flex flex-col sm:flex-row gap-3 justify-center", heroClasses.ctas)}>
+            <button
+              type="button"
+              onClick={() => scrollToId("pricing")}
+              className={cn(
+                "h-12 px-7 rounded-2xl font-semibold text-sm text-black",
+                "bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)]",
+                "transition-transform btn-glow hover:scale-[1.04] active:scale-[1.01]",
+              )}
+            >
+              Выбрать тариф
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToId("portfolio")}
+              className={cn(
+                "h-12 px-7 rounded-2xl font-semibold text-sm text-white/85",
+                "border border-[color:var(--border)] hover:bg-white/5",
+                "transition-transform hover:scale-[1.04] active:scale-[1.01]",
+              )}
+            >
+              Смотреть портфолио
+            </button>
+          </div>
 
-              <div className={cn("mt-8 flex flex-wrap gap-2", heroClasses.chips)}>
-                {[
-                  { icon: Clock, text: "Превью за 24 часа" },
-                  { icon: ImageIcon, text: "Форматы под площадки" },
-                  { icon: ShieldCheck, text: "Конфиденциально" },
-                  { icon: Sparkles, text: "Ретушь премиум" },
-                ].map((c, i) => {
-                  const Icon = c.icon;
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 rounded-full px-3 py-2 text-xs sm:text-sm text-white/75 border border-[color:var(--border)] bg-[color:var(--card-bg)]"
-                    >
-                      <Icon className="h-4 w-4 text-white/80" />
-                      <span>{c.text}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="lg:col-span-5">
-              <div
-                className={cn(
-                  "relative rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl overflow-hidden",
-                  "p-4 sm:p-6",
-                  mounted ? "animate-fadeInUp delay-1" : "opacity-0 translate-y-6",
-                )}
-              >
-                <div className="absolute inset-0 opacity-80" aria-hidden="true" style={{
-                  background:
-                    "radial-gradient(600px circle at 25% 20%, rgba(255,79,216,0.25), transparent 42%), radial-gradient(700px circle at 70% 30%, rgba(34,211,238,0.20), transparent 45%)",
-                }} />
-
-                <div className="relative">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-white/70">Пример результата</div>
-                    <div className="text-xs text-white/55">до → после</div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    {beforeUrl && afterUrl ? (
-                      <div className="col-span-2">
-                        <BeforeAfterSlider beforeUrl={beforeUrl} afterUrl={afterUrl} />
-                      </div>
-                    ) : (
-                      [
-                        { label: "До", tone: "rgba(255,255,255,0.06)" },
-                        { label: "После", tone: "rgba(34,211,238,0.12)" },
-                      ].map((b, idx) => (
-                        <div
-                          key={idx}
-                          className="rounded-2xl border border-[color:var(--border)] overflow-hidden"
-                          style={{ background: b.tone }}
-                        >
-                          <div className="h-24 sm:h-32 bg-black/20 relative">
-                            {(idx === 0 ? beforeUrl : afterUrl) ? (
-                              <>
-                                <img
-                                  src={idx === 0 ? beforeUrl : afterUrl}
-                                  alt=""
-                                  loading="lazy"
-                                  className="absolute inset-0 w-full h-full object-cover"
-                                  aria-hidden="true"
-                                />
-                                <div
-                                  className="absolute inset-0"
-                                  aria-hidden="true"
-                                  style={{
-                                    background:
-                                      "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.48) 100%)",
-                                  }}
-                                />
-                              </>
-                            ) : (
-                              <>
-                                <div
-                                  className="absolute inset-0"
-                                  aria-hidden="true"
-                                  style={{
-                                    background:
-                                      idx === 0
-                                        ? "linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))"
-                                        : "linear-gradient(135deg, rgba(255,79,216,0.22), rgba(34,211,238,0.18))",
-                                  }}
-                                />
-                                <div className="absolute inset-0 bg-[rgba(0,0,0,0.15)]" aria-hidden="true" />
-                              </>
-                            )}
-
-                            <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 flex items-center justify-between">
-                              <div className="text-[11px] sm:text-xs text-white/80">{b.label}</div>
-                              <div className="text-[10px] text-white/60 hidden sm:block">
-                                {idx === 0 ? "базовый кадр" : "цвет + ретушь + фактура"}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  <div className="mt-4 hidden sm:grid gap-3">
-                    {[
-                      { k: "Свет", v: "мягкий, объёмный" },
-                      { k: "Цвет", v: "кинематографичный" },
-                      { k: "Ретушь", v: "естественно" },
-                    ].map((r) => (
-                      <div key={r.k} className="flex items-center justify-between gap-3 text-sm">
-                        <div className="text-white/70">{r.k}</div>
-                        <div className="text-white/90 font-semibold">{r.v}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 sm:hidden flex flex-wrap gap-2">
-                    {[
-                      { k: "Свет", v: "мягкий" },
-                      { k: "Цвет", v: "кино" },
-                      { k: "Ретушь", v: "естественно" },
-                    ].map((r) => (
-                      <div
-                        key={r.k}
-                        className="rounded-full px-3 py-1.5 text-xs text-white/75 border border-[color:var(--border)] bg-white/5"
-                      >
-                        <span className="text-white/60">{r.k}:</span> <span className="text-white/90 font-semibold">{r.v}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 sm:mt-5 flex items-center gap-2 text-xs text-white/65">
-                    <Star className="h-4 w-4 text-white/80" />
-                    <span>Рейтинг: {rating.toFixed(1)} / 5</span>
-                    <span className="mx-2 h-1 w-1 rounded-full bg-white/20" />
-                    <span>Сотни повторных съёмок</span>
-                  </div>
+          <div className={cn("mt-8 flex flex-wrap gap-2 justify-center", heroClasses.chips)}>
+            {[
+              { icon: Clock, text: "Превью за 24 ч" },
+              { icon: ShieldCheck, text: "Конфиденциально" },
+              { icon: Sparkles, text: "Премиум ретушь" },
+              { icon: Star, text: `${rating.toFixed(1)} / 5` },
+            ].map((c, i) => {
+              const Icon = c.icon;
+              return (
+                <div key={i} className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-white/60 border border-[color:var(--border)] bg-[color:var(--card-bg)]">
+                  <Icon className="h-3.5 w-3.5" />
+                  <span>{c.text}</span>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1465,7 +1342,7 @@ export default function PhotoOnDemandLanding() {
           </button>
         </div>
 
-        {effectivePortfolio.length > 0 && (
+        {!portfolioLoading && effectivePortfolio.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {portfolioCategories.map((c) => (
               <button
@@ -1485,7 +1362,28 @@ export default function PhotoOnDemandLanding() {
           </div>
         )}
 
-        {effectivePortfolio.length === 0 ? (
+        {portfolioLoading ? (
+          <>
+            <div className="mt-10 overflow-hidden rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl">
+              <div className="px-5 py-4 flex items-center justify-between">
+                <div className="h-4 w-12 rounded-lg bg-white/10 animate-pulse" />
+                <div className="h-3 w-44 rounded-lg bg-white/10 animate-pulse" />
+              </div>
+              <div className="flex gap-3 px-5 pb-5 overflow-hidden">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <div key={i} className="h-28 w-44 sm:h-32 sm:w-52 rounded-2xl bg-white/8 animate-pulse shrink-0" style={{ animationDelay: `${i * 80}ms` }} />
+                ))}
+              </div>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="overflow-hidden rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl">
+                  <div className="aspect-[4/3] bg-white/8 animate-pulse" style={{ animationDelay: `${i * 60}ms` }} />
+                </div>
+              ))}
+            </div>
+          </>
+        ) : effectivePortfolio.length === 0 ? (
           <div className="mt-10 rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl p-6 text-white/70">
             <div className="text-sm font-semibold text-white/90">Фото пока не подключены.</div>
             <div className="mt-2 text-sm leading-relaxed">
