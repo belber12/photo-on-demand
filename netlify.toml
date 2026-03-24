@@ -3,6 +3,12 @@
   publish = "dist"
 
 [[redirects]]
+  from = "/yandex_c56b6a7384e7f6bf.html"
+  to = "/yandex_c56b6a7384e7f6bf.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
