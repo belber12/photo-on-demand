@@ -2,6 +2,22 @@
   command = "npm run build"
   publish = "dist"
 
+# Заголовки безопасности для всего сайта
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Дополнительные заголовки для /admin
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store, no-cache"
+
 [[redirects]]
   from = "/yandex_c56b6a7384e7f6bf.html"
   to = "/yandex_c56b6a7384e7f6bf.html"
