@@ -283,7 +283,6 @@ function BeforeAfterSlider({ beforeUrl, afterUrl, size = "compact", fit = "cover
       <div
         className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
         style={{ left: `${pos * 100}%` }}
-        aria-hidden="true"
       >
         <div
           className={cn(
@@ -1578,6 +1577,7 @@ export default function PhotoOnDemandLanding() {
               <div>
                 <div className="text-xs text-white/55 mb-2">Введите задачу</div>
                 <textarea
+                  aria-label="Введите задачу"
                   value={
                     toolTab === "generation"
                       ? "Портрет в стиле lifestyle, мягкий дневной свет, чистый фон, натуральная ретушь."
@@ -2387,6 +2387,7 @@ export default function PhotoOnDemandLanding() {
 
                   <textarea
                     name="message"
+                    aria-label="Комментарий"
                     value={leadMessage}
                     onChange={(e) => setLeadMessage(e.target.value)}
                     rows={3}
