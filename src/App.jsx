@@ -527,11 +527,6 @@ export default function PhotoOnDemandLanding() {
   const ribbonPortfolio = useMemo(() => effectivePortfolio.slice(0, 12), [effectivePortfolio]);
   const gridPortfolio = useMemo(() => effectivePortfolio.slice(0, 6), [effectivePortfolio]);
 
-  const heroBgUrl = useMemo(() => {
-    const preferredHero = effectivePortfolio.find((p) => p.path.includes("/assets/portfolio/post/1/"));
-    return preferredHero?.url || effectivePortfolio[0]?.url || null;
-  }, [effectivePortfolio]);
-
   const { beforeUrl, afterUrl } = useMemo(() => {
     const postBefore = allPortfolio.find((p) => p.path.endsWith("/post/before.jpg"));
     const postAfter = allPortfolio.find((p) => p.path.endsWith("/post/after.jpg"));
@@ -1252,18 +1247,8 @@ export default function PhotoOnDemandLanding() {
 
       {/* HERO */}
       <div id="top" className="relative overflow-hidden">
-        {heroBgUrl && (
-          <img
-            src={heroBgUrl}
-            alt=""
-            fetchPriority="high"
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.12]"
-            style={{ filter: "saturate(1.1) contrast(1.05)" }}
-            aria-hidden="true"
-          />
-        )}
         <div className="absolute inset-0" aria-hidden="true" style={{
-          background: "linear-gradient(180deg, rgba(8,8,15,0.75) 0%, rgba(8,8,15,0.85) 100%)",
+          background: "linear-gradient(135deg, rgba(8,8,15,1) 0%, rgba(18,18,35,1) 50%, rgba(8,8,15,1) 100%)",
         }} />
 
         <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pt-20 sm:pt-28 pb-20 sm:pb-28 text-center">
