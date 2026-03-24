@@ -7,10 +7,16 @@ export const supabase = createClient(
 
 export const PORTFOLIO_BUCKET = "portfolio";
 
-/** Get the public URL for a file in the portfolio bucket */
-export function getPortfolioUrl(storagePath) {
-  const { data } = supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(storagePath);
-  return data.publicUrl;
+/** Get the public URL for a file in the portfolio bucket.
+ *  width=0 means original. Otherwise uses Supabase image transform (WebP, compressed).
+ */
+export function getPortfolioUrl(storagePath, { width = 0, quality = 75 } = {}) {
+  if (width > 0) {
+    const base = import.meta.env.VITE_SUPABASE_URL
+    return `${base}/storage/v1/render/image/public/${PORTFOLIO_BUCKET}/${storagePath}?width=${width}&quality=${quality}&format=webp`
+  }
+  const { data } = supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(storagePath)
+  return data.publicUrl
 }
 
 /** Recursively list all files under a prefix in the portfolio bucket */
@@ -44,7 +50,8 @@ export async function fetchPortfolioItems() {
     .map((storagePath) => ({
       // Preserve virtual path prefix so App.jsx regex patterns still work
       path: `./assets/portfolio/${storagePath}`,
-      url: getPortfolioUrl(storagePath),
+      url: getPortfolioUrl(storagePath, { width: 800, quality: 75 }),
+      urlFull: getPortfolioUrl(storagePath),
     }))
     .sort((a, b) => a.path.localeCompare(b.path));
 }

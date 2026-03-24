@@ -1021,7 +1021,7 @@ export default function PhotoOnDemandLanding() {
 
               <div className="relative rounded-3xl border border-[color:var(--border)] bg-black/40 backdrop-blur-xl overflow-hidden">
                 <img
-                  src={effectivePortfolio[lightboxIndex].url}
+                  src={effectivePortfolio[lightboxIndex].urlFull || effectivePortfolio[lightboxIndex].url}
                   alt="Фото из портфолио"
                   className={cn("w-full max-h-[78vh] object-contain bg-black/30", imageBoostClass)}
                 />
