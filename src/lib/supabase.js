@@ -8,15 +8,15 @@ export const supabase = createClient(
 export const PORTFOLIO_BUCKET = "portfolio";
 
 /** Get the public URL for a file in the portfolio bucket.
- *  width=0 means original. Otherwise uses Supabase image transform (WebP, compressed).
+ *  width=0 means original. Otherwise uses Netlify Image CDN (free, WebP, cached).
  */
 export function getPortfolioUrl(storagePath, { width = 0, quality = 75 } = {}) {
-  if (width > 0) {
-    const base = import.meta.env.VITE_SUPABASE_URL
-    return `${base}/storage/v1/render/image/public/${PORTFOLIO_BUCKET}/${storagePath}?width=${width}&quality=${quality}&format=webp`
-  }
   const { data } = supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(storagePath)
-  return data.publicUrl
+  const originalUrl = data.publicUrl
+  if (width > 0) {
+    return `/.netlify/images?url=${encodeURIComponent(originalUrl)}&w=${width}&q=${quality}&fm=webp`
+  }
+  return originalUrl
 }
 
 /** Recursively list all files under a prefix in the portfolio bucket */
