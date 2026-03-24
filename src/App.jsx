@@ -1256,7 +1256,7 @@ export default function PhotoOnDemandLanding() {
           <img
             src={heroBgUrl}
             alt=""
-            fetchpriority="high"
+            fetchPriority="high"
             className="absolute inset-0 w-full h-full object-cover opacity-[0.12]"
             style={{ filter: "saturate(1.1) contrast(1.05)" }}
             aria-hidden="true"
