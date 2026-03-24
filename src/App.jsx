@@ -895,7 +895,7 @@ export default function PhotoOnDemandLanding() {
   );
 
   return (
-    <div className="min-h-screen bg-[color:var(--bg-primary)] text-white selection:bg-white/20 selection:text-white pb-24 md:pb-0">
+    <div className="min-h-screen bg-[color:var(--bg-primary)] text-white selection:bg-white/20 selection:text-white pb-24 md:pb-0" role="main">
       <style>{`
         :root{
           --bg-primary: #08080f;
@@ -1257,6 +1257,7 @@ export default function PhotoOnDemandLanding() {
           <img
             src={heroBgUrl}
             alt=""
+            fetchpriority="high"
             className="absolute inset-0 w-full h-full object-cover opacity-[0.12]"
             style={{ filter: "saturate(1.1) contrast(1.05)" }}
             aria-hidden="true"
@@ -2311,6 +2312,7 @@ export default function PhotoOnDemandLanding() {
                     <input
                       type="text"
                       placeholder="Имя"
+                      aria-label="Имя"
                       name="name"
                       value={leadName}
                       onChange={(e) => setLeadName(e.target.value)}
@@ -2324,6 +2326,7 @@ export default function PhotoOnDemandLanding() {
                       type="tel"
                       inputMode="tel"
                       placeholder="Телефон"
+                      aria-label="Телефон"
                       name="phone"
                       value={leadPhone}
                       onChange={(e) => setLeadPhone(e.target.value)}
@@ -2340,6 +2343,7 @@ export default function PhotoOnDemandLanding() {
                       type="email"
                       required
                       placeholder="Ваш email"
+                      aria-label="Email"
                       name="email"
                       value={leadEmail}
                       onChange={(e) => setLeadEmail(e.target.value)}
@@ -2365,6 +2369,7 @@ export default function PhotoOnDemandLanding() {
 
                   <select
                     name="shootType"
+                    aria-label="Тип съёмки"
                     value={leadShootType}
                     onChange={(e) => setLeadShootType(e.target.value)}
                     className={cn(
