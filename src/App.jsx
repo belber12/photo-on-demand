@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
 import {
   BadgeCheck,
@@ -364,6 +365,67 @@ function Section({ id, children, className, innerClassName }) {
   );
 }
 
+function BlogPreview() {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from("blog_articles")
+      .select("id, slug, title, excerpt, cover_url, created_at")
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .limit(3)
+      .then(({ data }) => { setArticles(data || []); setLoading(false); });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid sm:grid-cols-3 gap-5">
+        {[1,2,3].map(i => <div key={i} className="h-56 bg-white/5 rounded-2xl animate-pulse" />)}
+      </div>
+    );
+  }
+
+  if (articles.length === 0) {
+    return (
+      <div className="text-center py-10 text-white/30 text-sm">Статьи скоро появятся</div>
+    );
+  }
+
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {articles.map(art => (
+        <Link
+          key={art.id}
+          to={`/blog/${art.slug}`}
+          className="group flex flex-col bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl overflow-hidden transition-all"
+        >
+          {art.cover_url ? (
+            <img src={art.cover_url} alt={art.title} className="w-full h-44 object-cover" />
+          ) : (
+            <div className="w-full h-44 bg-white/5 flex items-center justify-center text-white/20 text-4xl">📷</div>
+          )}
+          <div className="p-5 flex-1 flex flex-col">
+            <p className="text-xs text-white/35 mb-2">
+              {new Date(art.created_at).toLocaleDateString("ru", { day: "numeric", month: "long" })}
+            </p>
+            <h3 className="font-semibold text-sm leading-snug group-hover:text-white/90 transition-colors line-clamp-3">
+              {art.title}
+            </h3>
+            {art.excerpt && (
+              <p className="mt-2 text-xs text-white/50 line-clamp-2">{art.excerpt}</p>
+            )}
+            <div className="mt-auto pt-4 text-xs text-white/35 group-hover:text-white/60 transition-colors">
+              Читать →
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 export default function PhotoOnDemandLanding() {
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -438,6 +500,7 @@ export default function PhotoOnDemandLanding() {
       { id: "testimonials", label: "Отзывы" },
       { id: "pricing", label: "Цены" },
       { id: "faq", label: "FAQ" },
+      { id: "blog", label: "Блог" },
     ],
     [],
   );
@@ -2153,6 +2216,26 @@ export default function PhotoOnDemandLanding() {
             />
           ))}
         </div>
+      </Section>
+
+      {/* БЛОГ */}
+      <Section id="blog" className="py-20 sm:py-24">
+        <div className="flex items-end justify-between gap-6 flex-wrap mb-10">
+          <div>
+            <div className="text-xs sm:text-sm text-white/60">Блог</div>
+            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+              Полезные материалы
+            </h2>
+            <p className="mt-3 text-white/70 max-w-xl">Советы по подготовке к съёмке, выбору образа, работе с референсами и ретуши.</p>
+          </div>
+          <a
+            href="/blog"
+            className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1"
+          >
+            Все статьи →
+          </a>
+        </div>
+        <BlogPreview />
       </Section>
 
       {/* CTA BANNER */}

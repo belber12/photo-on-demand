@@ -9,8 +9,9 @@
     },
     {
       "name": "Сайт фото на заказ",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "npm run dev"],
+      "cwd": "C:\\Users\\Oleg\\Desktop\\сайт фото на заказ  (новый)\\сайт фото на заказ",
       "port": 5173
     }
   ]

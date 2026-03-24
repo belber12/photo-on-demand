@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
 Sitemap: https://fotostudiozakaz.ru/sitemap.xml
+
+# Яндекс
+User-agent: Yandex
+Allow: /
+Disallow: /admin/
+Crawl-delay: 1

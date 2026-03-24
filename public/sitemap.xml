@@ -1,9 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Главная страница -->
   <url>
     <loc>https://fotostudiozakaz.ru/</loc>
-    <lastmod>2026-03-22</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Секции главной (для Яндекса — отдельные приоритеты) -->
+  <url>
+    <loc>https://fotostudiozakaz.ru/#portfolio</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://fotostudiozakaz.ru/#pricing</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://fotostudiozakaz.ru/#services</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://fotostudiozakaz.ru/#faq</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Блог -->
+  <url>
+    <loc>https://fotostudiozakaz.ru/blog</loc>
+    <lastmod>2026-03-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Статьи блога добавляются скриптом: npm run sitemap -->
+
 </urlset>
