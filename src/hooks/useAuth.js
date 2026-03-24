@@ -4,17 +4,19 @@ import { supabase } from '../lib/supabase'
 export function useAuth() {
   const [session, setSession] = useState(undefined) // undefined = loading
   const [isAdmin, setIsAdmin] = useState(false)
+  const [adminChecked, setAdminChecked] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session) checkAdmin(session.user.id)
+      else setAdminChecked(true)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       if (session) checkAdmin(session.user.id)
-      else setIsAdmin(false)
+      else { setIsAdmin(false); setAdminChecked(true) }
     })
 
     return () => subscription.unsubscribe()
@@ -27,12 +29,13 @@ export function useAuth() {
       .eq('user_id', userId)
       .maybeSingle()
     setIsAdmin(!!data)
+    setAdminChecked(true)
   }
 
   return {
     session,
     user: session?.user ?? null,
     isAdmin,
-    loading: session === undefined,
+    loading: session === undefined || (session !== null && !adminChecked),
   }
 }
