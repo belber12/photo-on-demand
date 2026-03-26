@@ -19,39 +19,37 @@ export function getPortfolioUrl(storagePath, { width = 0, quality = 75 } = {}) {
   return originalUrl
 }
 
-/** Recursively list all files under a prefix in the portfolio bucket */
-async function listFiles(prefix) {
-  const { data, error } = await supabase.storage
-    .from(PORTFOLIO_BUCKET)
-    .list(prefix || undefined, { limit: 1000 });
-  if (error || !data) return [];
-
-  const results = [];
-  for (const item of data) {
-    const itemPath = prefix ? `${prefix}/${item.name}` : item.name;
-    if (item.id === null) {
-      // Directory — recurse
-      results.push(...(await listFiles(itemPath)));
-    } else {
-      results.push(itemPath);
-    }
-  }
-  return results;
-}
+const CACHE_KEY = "portfolio_files_v3";
+const CACHE_TTL = 60 * 60 * 1000; // 1 час
 
 /**
- * Fetch all portfolio images from Supabase Storage.
- * Returns array of { path, url } where path mimics the original local path
- * for category-detection regex compatibility.
+ * Fetch all portfolio images via a single RPC call to list_portfolio_files().
+ * Replaces the old recursive storage.list() approach (N requests → 1 request).
+ * Results are cached in localStorage for CACHE_TTL.
  */
 export async function fetchPortfolioItems() {
-  const files = await listFiles("");
-  return files
-    .map((storagePath) => ({
-      // Preserve virtual path prefix so App.jsx regex patterns still work
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const { data, ts } = JSON.parse(cached);
+      if (Date.now() - ts < CACHE_TTL) return data;
+    }
+  } catch {}
+
+  const { data, error } = await supabase.rpc("list_portfolio_files");
+  if (error || !data) return [];
+
+  const result = data
+    .map(({ name: storagePath }) => ({
       path: `./assets/portfolio/${storagePath}`,
-      url: getPortfolioUrl(storagePath, { width: 800, quality: 75 }),
+      url: getPortfolioUrl(storagePath, { width: 800, quality: 65 }),
+      urlThumb: getPortfolioUrl(storagePath, { width: 400, quality: 60 }),
       urlFull: getPortfolioUrl(storagePath),
-    }))
-    .sort((a, b) => a.path.localeCompare(b.path));
+    }));
+
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data: result, ts: Date.now() }));
+  } catch {}
+
+  return result;
 }

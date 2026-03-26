@@ -162,16 +162,19 @@
     }
     </script>
 
-    <!-- Яндекс.Метрика -->
+    <!-- Яндекс.Метрика — отложенная загрузка после интерактивности -->
     <script type="text/javascript">
-      (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108191152', 'ym');
-
-      ym(108191152, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+      (window.ym = window.ym || function(){(window.ym.a = window.ym.a || []).push(arguments)});
+      window.ym.l = 1 * new Date();
+      (window.requestIdleCallback || function(cb){ setTimeout(cb, 200); })(function() {
+        (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108191152', 'ym');
+        ym(108191152, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+      });
     </script>
   </head>
   <body>
@@ -194,7 +197,8 @@
       <p><label>Комментарий <textarea name="message"></textarea></label></p>
     </form>
     <noscript><div><img src="https://mc.yandex.ru/watch/108191152" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <div id="root"></div>
+    <!-- Pre-rendered shell: логотип появляется до загрузки React, снижает LCP render delay -->
+    <div id="root"><nav style="position:fixed;top:0;left:0;right:0;z-index:50;padding:.75rem 1.5rem;background:rgba(8,8,15,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;gap:.75rem;border-bottom:1px solid rgba(255,255,255,.08)" aria-hidden="true"><span style="font-size:.875rem;font-weight:600;letter-spacing:-.025em;color:#fff;font-family:system-ui,sans-serif">Фото<span style="color:rgba(255,255,255,.7)">на</span>Заказ</span></nav></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

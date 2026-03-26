@@ -903,8 +903,8 @@ export default function PhotoOnDemandLanding() {
           color: rgba(255,255,255,0.92);
         }
         @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
-          to { opacity: 1; transform: translateY(0); filter: blur(0); }
+          from { opacity: 0; transform: translateY(18px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .animate-fadeInUp{
           animation: fadeInUp 900ms cubic-bezier(.2,.8,.2,1) both;
@@ -1148,6 +1148,7 @@ export default function PhotoOnDemandLanding() {
           mobileOpen ? "pointer-events-auto" : "pointer-events-none",
         )}
         aria-hidden={!mobileOpen}
+        inert={!mobileOpen || undefined}
       >
         <div
           className={cn(
@@ -1463,7 +1464,7 @@ export default function PhotoOnDemandLanding() {
                       className="relative h-28 w-44 sm:h-32 sm:w-52 rounded-2xl overflow-hidden border border-white/10 bg-black/20 shrink-0 transition-transform hover:scale-[1.03]"
                       aria-label="Открыть фото"
                     >
-                      <img src={p.url} alt="" loading="lazy" className={cn("absolute inset-0 w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
+                      <img src={p.urlThumb} alt="" loading="lazy" className={cn("absolute inset-0 w-full h-full object-cover", imageBoostClass)} aria-hidden="true" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true" />
                     </button>
                   ))}
@@ -2523,6 +2524,7 @@ export default function PhotoOnDemandLanding() {
           showStickyCta ? "opacity-100 translate-y-0 pointer-events-auto sticky-enter" : "opacity-0 translate-y-3 pointer-events-none",
         )}
         aria-hidden={!showStickyCta}
+        inert={!showStickyCta || undefined}
       >
         <div
           className="mx-auto max-w-6xl px-4 sm:px-6"
@@ -2673,7 +2675,7 @@ function TestimonialsCarousel({ items }) {
                   <div className="text-sm font-semibold text-white/90">{t.name}</div>
                   <div className="text-xs text-white/55">{t.role}</div>
                 </div>
-                <div className="ml-auto flex items-center gap-1 text-white/80" aria-label={`Рейтинг ${t.rating} из 5`}>
+                <div className="ml-auto flex items-center gap-1 text-white/80" role="img" aria-label={`Рейтинг ${t.rating} из 5`}>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className={cn("h-4 w-4", i < t.rating ? "text-white/90" : "text-white/20")} />
                   ))}
@@ -2722,7 +2724,7 @@ function TestimonialsCarousel({ items }) {
                 <div className="text-sm font-semibold text-white/90">{t.name}</div>
                 <div className="text-xs text-white/55">{t.role}</div>
               </div>
-              <div className="ml-auto flex items-center gap-1 text-white/80" aria-label={`Рейтинг ${t.rating} из 5`}>
+              <div className="ml-auto flex items-center gap-1 text-white/80" role="img" aria-label={`Рейтинг ${t.rating} из 5`}>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className={cn("h-4 w-4", i < t.rating ? "text-white/90" : "text-white/20")} />
                 ))}
