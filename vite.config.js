@@ -26,9 +26,10 @@ function inlineCssPlugin() {
       const htmlPath = join(distDir, 'index.html')
       let html = readFileSync(htmlPath, 'utf-8')
 
-      // Заменяем <link rel="stylesheet" ...> на <style>...</style>
+      // Заменяем <link ... rel="stylesheet" ...> на <style>...</style>
+      // Vite 7 может ставить crossorigin до rel, поэтому ищем <link> с rel="stylesheet" в любом порядке
       html = html.replace(
-        /<link rel="stylesheet"[^>]*href="[^"]*\.css"[^>]*>/,
+        /<link[^>]+rel="stylesheet"[^>]*>/,
         `<style>${css}</style>`
       )
 
