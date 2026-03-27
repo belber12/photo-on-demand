@@ -13,7 +13,7 @@ const NAV = [
   { to: '/admin/leads',     icon: Inbox,            label: 'Заявки' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   const navigate = useNavigate()
 
   async function handleSignOut() {
@@ -22,7 +22,8 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="fixed top-0 left-0 h-full w-56 bg-gray-950 border-r border-gray-800 flex flex-col z-40">
+    <aside className={`fixed top-0 left-0 h-full w-56 bg-gray-950 border-r border-gray-800 flex flex-col z-40 transition-transform duration-300
+      ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
       {/* Логотип */}
       <div className="px-5 py-5 border-b border-gray-800">
         <span className="text-white font-semibold text-sm tracking-wide">📷 Фото — Админ</span>
@@ -35,6 +36,7 @@ export default function Sidebar() {
             key={to}
             to={to}
             end={end}
+            onClick={onClose}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive
