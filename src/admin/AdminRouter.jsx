@@ -2,8 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminLayout from './components/AdminLayout'
-
-const LoginPage     = lazy(() => import('./pages/LoginPage'))
+import LoginPage from './pages/LoginPage'
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const ContentPage   = lazy(() => import('./pages/ContentPage'))
 const PricingPage   = lazy(() => import('./pages/PricingPage'))
