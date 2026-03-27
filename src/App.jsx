@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
+import { PromptInputBox } from "./components/ui/ai-prompt-box.jsx";
 import {
   BadgeCheck,
   BookOpen,
@@ -2225,6 +2226,35 @@ export default function PhotoOnDemandLanding() {
           </a>
         </div>
         <BlogPreview />
+      </Section>
+
+      {/* AI PROMPT — опишите задачу */}
+      <Section id="prompt" className="py-14 sm:py-16">
+        <div className="text-center mb-8 animate-fadeInUp">
+          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 border border-[color:var(--border)] bg-[color:var(--card-bg)] mb-4">
+            <Sparkles className="h-4 w-4 text-white/60" />
+            <span className="text-xs text-white/55 font-medium">Умная заявка</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Опишите вашу задачу
+          </h2>
+          <p className="mt-2 text-white/55 text-sm sm:text-base max-w-md mx-auto">
+            Расскажите о проекте — мы подберём формат, концепт и отправим бриф
+          </p>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
+          <PromptInputBox
+            placeholder="Например: нужны фото товаров для маркетплейса, 15 позиций, белый фон..."
+            onSend={(message) => {
+              setLeadMessage((prev) => prev ? prev + "\n" + message : message);
+              scrollToId("cta");
+            }}
+          />
+          <p className="mt-3 text-center text-xs text-white/35">
+            После отправки вы перейдёте к форме — укажите контакты и мы свяжемся с вами
+          </p>
+        </div>
       </Section>
 
       {/* CTA BANNER */}
