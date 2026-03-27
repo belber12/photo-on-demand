@@ -1003,6 +1003,14 @@ export default function PhotoOnDemandLanding() {
         .handle-pulse{
           animation: handlePulse 900ms ease-in-out infinite;
         }
+        @keyframes scrollDot {
+          0%   { transform: translateY(0); opacity: 1; }
+          60%  { transform: translateY(22px); opacity: 0.4; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        .scroll-dot {
+          animation: scrollDot 1.8s cubic-bezier(.4,0,.6,1) infinite;
+        }
       `}</style>
 
       {/* Lightbox */}
@@ -1322,6 +1330,24 @@ export default function PhotoOnDemandLanding() {
               );
             })}
           </div>
+
+          {/* Scroll Indicator */}
+          <button
+            type="button"
+            onClick={() => scrollToId("before-after")}
+            aria-label="Листать ниже"
+            className="mt-10 mx-auto flex flex-col items-center gap-1 opacity-50 hover:opacity-80 transition-opacity duration-300 focus:outline-none"
+          >
+            <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">
+              Листай
+            </span>
+            <div className="relative w-[1.5px] h-10 bg-white/20 rounded-full overflow-hidden my-0.5">
+              <div className="scroll-dot absolute top-0 left-0 w-full h-3 rounded-full bg-gradient-to-b from-[var(--accent-from)] to-[var(--accent-to)]" />
+            </div>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">
+              Ниже
+            </span>
+          </button>
         </div>
       </div>
 
