@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
 import { PromptInputBox } from "./components/ui/ai-prompt-box.jsx";
+import { HeroGeometric } from "./components/ui/shape-landing-hero.jsx";
 import {
   BadgeCheck,
   BookOpen,
@@ -1267,29 +1268,15 @@ export default function PhotoOnDemandLanding() {
       </div>
 
       {/* HERO */}
-      <div id="top" className="relative overflow-hidden">
-        <div className="absolute inset-0" aria-hidden="true" style={{
-          background: "linear-gradient(135deg, rgba(8,8,15,1) 0%, rgba(18,18,35,1) 50%, rgba(8,8,15,1) 100%)",
-        }} />
-
-        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pt-20 sm:pt-28 pb-24 sm:pb-28 text-center">
-          <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5 border border-[color:var(--border)] bg-[color:var(--card-bg)]", heroClasses.chips)}>
-            <BadgeCheck className="h-4 w-4 text-white/70" />
-            <span className="text-xs text-white/65">Съёмка и ретушь в одном процессе</span>
-          </div>
-
-          <h1 className={cn("mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08]", heroClasses.h1)}>
-            Фото на заказ,{" "}
-            <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
-              которые работают
-            </span>
-          </h1>
-
-          <p className={cn("mt-5 text-base sm:text-lg text-white/60 max-w-xl mx-auto", heroClasses.p)}>
-            Концепт, съёмка и ретушь под вашу задачу.
-          </p>
-
-          <div className={cn("mt-8 flex flex-col sm:flex-row gap-3 justify-center", heroClasses.ctas)}>
+      <div id="top" className="relative">
+        <HeroGeometric
+          badge="Premium Photo Studio"
+          title1="Фото на заказ,"
+          title2="которые работают"
+          description="Концепт, съёмка и ретушь под вашу задачу."
+        >
+          {/* CTA buttons */}
+          <div className={cn("flex flex-col sm:flex-row gap-3 justify-center mb-8", heroClasses.ctas)}>
             <button
               type="button"
               onClick={() => scrollToId("pricing")}
@@ -1314,7 +1301,8 @@ export default function PhotoOnDemandLanding() {
             </button>
           </div>
 
-          <div className={cn("mt-8 flex flex-wrap gap-2 justify-center", heroClasses.chips)}>
+          {/* Chips */}
+          <div className={cn("flex flex-wrap gap-2 justify-center mb-10", heroClasses.chips)}>
             {[
               { icon: Clock, text: "Превью за 24 ч" },
               { icon: ShieldCheck, text: "Конфиденциально" },
@@ -1336,19 +1324,15 @@ export default function PhotoOnDemandLanding() {
             type="button"
             onClick={() => scrollToId("before-after")}
             aria-label="Листать ниже"
-            className="mt-10 mx-auto flex flex-col items-center gap-1 opacity-50 hover:opacity-80 transition-opacity duration-300 focus:outline-none"
+            className="mx-auto flex flex-col items-center gap-1 opacity-50 hover:opacity-80 transition-opacity duration-300 focus:outline-none"
           >
-            <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">
-              Листай
-            </span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">Листай</span>
             <div className="relative w-[1.5px] h-10 bg-white/20 rounded-full overflow-hidden my-0.5">
               <div className="scroll-dot absolute top-0 left-0 w-full h-3 rounded-full bg-gradient-to-b from-[var(--accent-from)] to-[var(--accent-to)]" />
             </div>
-            <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">
-              Ниже
-            </span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.22em] text-white/70">Ниже</span>
           </button>
-        </div>
+        </HeroGeometric>
       </div>
 
       {/* ДО И ПОСЛЕ по категориям */}
