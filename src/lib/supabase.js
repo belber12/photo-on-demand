@@ -19,7 +19,7 @@ export function getPortfolioUrl(storagePath, { width = 0, quality = 75 } = {}) {
   return originalUrl
 }
 
-const CACHE_KEY = "portfolio_files_v3";
+const CACHE_KEY = "portfolio_files_v4";
 const CACHE_TTL = 60 * 60 * 1000; // 1 час
 
 /**
@@ -42,8 +42,8 @@ export async function fetchPortfolioItems() {
   const result = data
     .map(({ name: storagePath }) => ({
       path: `./assets/portfolio/${storagePath}`,
-      url: getPortfolioUrl(storagePath, { width: 800, quality: 65 }),
-      urlThumb: getPortfolioUrl(storagePath, { width: 400, quality: 60 }),
+      url: getPortfolioUrl(storagePath, { width: 700, quality: 50 }),
+      urlThumb: getPortfolioUrl(storagePath, { width: 260, quality: 40 }),
       urlFull: getPortfolioUrl(storagePath),
     }));
 

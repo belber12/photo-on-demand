@@ -2577,15 +2577,6 @@ export default function PhotoOnDemandLanding() {
 }
 
 function FaqItem({ q, a, open, onToggle }) {
-  const contentRef = useRef(null);
-  const [maxH, setMaxH] = useState(0);
-
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    setMaxH(open ? el.scrollHeight : 0);
-  }, [open, a]);
-
   return (
     <div
       className={cn(
@@ -2603,11 +2594,13 @@ function FaqItem({ q, a, open, onToggle }) {
         <ChevronDown className={cn("h-5 w-5 text-white/75 transition-transform duration-300", open ? "rotate-180" : "rotate-0")} />
       </button>
       <div
-        className="px-5 overflow-hidden transition-[max-height] duration-300 ease-out"
-        style={{ maxHeight: `${maxH}px` }}
+        className={cn(
+          "px-5 grid transition-[grid-template-rows] duration-300 ease-out",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        )}
       >
-        <div ref={contentRef} className="pb-4 text-sm text-white/70 leading-relaxed">
-          {a}
+        <div className="overflow-hidden">
+          <div className="pb-4 text-sm text-white/70 leading-relaxed">{a}</div>
         </div>
       </div>
     </div>
