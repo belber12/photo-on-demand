@@ -3,8 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
-import App from './App.jsx'
-
+const App         = lazy(() => import('./App.jsx'))
 const AdminRouter = lazy(() => import('./admin/AdminRouter.jsx'))
 const BlogListPage = lazy(() => import('./pages/BlogListPage.jsx'))
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage.jsx'))

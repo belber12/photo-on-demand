@@ -106,12 +106,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+      <main className="w-full max-w-sm">
         {/* Заголовок */}
         <div className="text-center mb-8">
           <div className="text-3xl mb-3">📷</div>
           <h1 className="text-white text-xl font-semibold">Вход в админ-панель</h1>
-          <p className="text-gray-500 text-sm mt-1">Фото на заказ</p>
+          <p className="text-gray-400 text-sm mt-1">Фото на заказ</p>
         </div>
 
         {/* Блокировка */}
@@ -176,7 +176,7 @@ export default function LoginPage() {
             {/* Разделитель */}
             <div className="flex items-center gap-3 my-5">
               <div className="flex-1 h-px bg-gray-800" />
-              <span className="text-gray-600 text-xs">или</span>
+              <span className="text-gray-400 text-xs">или</span>
               <div className="flex-1 h-px bg-gray-800" />
             </div>
 
@@ -195,7 +195,7 @@ export default function LoginPage() {
             </button>
           </>
         )}
-      </div>
+      </main>
     </div>
   )
 }
