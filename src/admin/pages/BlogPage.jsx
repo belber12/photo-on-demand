@@ -41,58 +41,52 @@ export default function BlogPage() {
           <Link to="/admin/blog/new" className="text-white text-sm underline">Создать первую статью</Link>
         </div>
       ) : (
-        <div className="bg-gray-950 border border-gray-800 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-800 text-gray-500 text-xs">
-                <th className="text-left px-5 py-3 font-medium">Заголовок</th>
-                <th className="text-left px-5 py-3 font-medium">Slug</th>
-                <th className="text-left px-5 py-3 font-medium">Дата</th>
-                <th className="text-left px-5 py-3 font-medium">Статус</th>
-                <th className="px-5 py-3" />
-              </tr>
-            </thead>
-            <tbody>
-              {articles.map(art => (
-                <tr key={art.id} className="border-b border-gray-800 last:border-0 hover:bg-gray-900/50 transition-colors">
-                  <td className="px-5 py-3 text-white font-medium max-w-xs truncate">{art.title}</td>
-                  <td className="px-5 py-3 text-gray-500 font-mono text-xs">{art.slug}</td>
-                  <td className="px-5 py-3 text-gray-500">{new Date(art.created_at).toLocaleDateString('ru')}</td>
-                  <td className="px-5 py-3">
-                    <button
-                      onClick={() => handleToggle(art.id, art.published)}
-                      disabled={toggling === art.id}
-                      className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full transition-colors ${
-                        art.published
-                          ? 'bg-green-500/15 text-green-400 hover:bg-green-500/25'
-                          : 'bg-gray-800 text-gray-500 hover:bg-gray-700'
-                      }`}
-                    >
-                      {toggling === art.id
-                        ? <Loader2 size={11} className="animate-spin" />
-                        : art.published ? <Eye size={11} /> : <EyeOff size={11} />
-                      }
-                      {art.published ? 'Опубликована' : 'Черновик'}
-                    </button>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-2 justify-end">
-                      <Link to={`/admin/blog/${art.id}`} className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-md transition-colors">
-                        <Pencil size={14} />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(art.id)}
-                        disabled={deleting === art.id}
-                        className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors disabled:opacity-50"
-                      >
-                        {deleting === art.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-3">
+          {articles.map(art => (
+            <div key={art.id} className="bg-gray-950 border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+              {/* Заголовок и дата */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-medium leading-snug">{art.title}</p>
+                  <p className="text-gray-500 text-xs mt-1">{new Date(art.created_at).toLocaleDateString('ru')}</p>
+                </div>
+                {/* Статус */}
+                <button
+                  onClick={() => handleToggle(art.id, art.published)}
+                  disabled={toggling === art.id}
+                  className={`shrink-0 flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full transition-colors ${
+                    art.published
+                      ? 'bg-green-500/15 text-green-400 hover:bg-green-500/25'
+                      : 'bg-gray-800 text-gray-500 hover:bg-gray-700'
+                  }`}
+                >
+                  {toggling === art.id
+                    ? <Loader2 size={11} className="animate-spin" />
+                    : art.published ? <Eye size={11} /> : <EyeOff size={11} />
+                  }
+                  {art.published ? 'Опубл.' : 'Черновик'}
+                </button>
+              </div>
+
+              {/* Кнопки действий */}
+              <div className="flex items-center gap-2 border-t border-gray-800 pt-3">
+                <Link
+                  to={`/admin/blog/${art.id}`}
+                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-white transition-colors"
+                >
+                  <Pencil size={14} /> Редактировать
+                </Link>
+                <button
+                  onClick={() => handleDelete(art.id)}
+                  disabled={deleting === art.id}
+                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-sm text-red-400 transition-colors disabled:opacity-50"
+                >
+                  {deleting === art.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  Удалить
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
