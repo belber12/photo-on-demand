@@ -1083,7 +1083,7 @@ export default function PhotoOnDemandLanding() {
               <span className="hidden sm:inline text-xs text-white/55 ml-2">Premium Photo Studio</span>
             </button>
 
-            <nav className="hidden lg:flex items-center gap-1 text-sm text-white/70">
+            <nav className="hidden items-center gap-1 text-sm text-white/70">
               {navItems.map((it) => (
                 <button
                   key={it.id}
@@ -1128,7 +1128,7 @@ export default function PhotoOnDemandLanding() {
                 type="button"
                 onClick={() => setMobileOpen(true)}
                 className={cn(
-                  "lg:hidden inline-flex items-center justify-center h-11 w-11 rounded-xl",
+                  "inline-flex items-center justify-center h-11 w-11 rounded-xl",
                   "border border-[color:var(--border)] bg-[color:var(--card-bg)]",
                   "transition-transform hover:scale-[1.05] active:scale-[1.01]",
                 )}
@@ -1144,7 +1144,7 @@ export default function PhotoOnDemandLanding() {
       {/* Mobile Drawer */}
       <div
         className={cn(
-          "lg:hidden fixed inset-0 z-[60] transition-all duration-300",
+          "fixed inset-0 z-[60] transition-all duration-300",
           mobileOpen ? "pointer-events-auto" : "pointer-events-none",
         )}
         aria-hidden={!mobileOpen}
