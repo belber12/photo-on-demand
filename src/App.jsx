@@ -101,6 +101,15 @@ function getUrlFromGlobMod(mod) {
   return null;
 }
 
+function getCategoryLabel(path) {
+  const p = (path || "").toLowerCase();
+  if (/portrety|portrait/.test(p)) return "Портреты";
+  if (/svadby|wedding/.test(p)) return "Свадьбы";
+  if (/predmety|catalog|ea888|stek/.test(p)) return "Предметка";
+  if (/post/.test(p)) return "Ретушь";
+  return "Фотосъёмка";
+}
+
 function pickBeforeAfter(portfolio) {
   const norm = (s) => (s || "").toLowerCase();
   const isBefore = (p) => /(^|\/)(before|до)(\/|_|-|\.|\s)/i.test(p) || /before|до/i.test(p);
@@ -1317,7 +1326,7 @@ export default function PhotoOnDemandLanding() {
       </div>
 
       {/* ДО И ПОСЛЕ по категориям */}
-      <Section id="before-after" className="py-20 sm:py-24">
+      <Section id="before-after" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Образцы</div>
@@ -1366,11 +1375,11 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* PORTFOLIO */}
-      <Section id="portfolio" className="py-20 sm:py-24">
-        <div className="flex items-end justify-between gap-6 flex-wrap">
+      <Section id="portfolio" className="py-10 sm:py-24">
+        <div className="flex items-end justify-between gap-4 flex-wrap">
           <div>
-            <div className="text-xs sm:text-sm text-white/60">Портфолио</div>
-            <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
+            <div className="text-xs sm:text-sm text-white/60 uppercase tracking-widest">Портфолио</div>
+            <h2 className="mt-1.5 text-xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
               Немного{" "}
               <span className="bg-gradient-to-r from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-transparent">
                 живых кадров
@@ -1450,7 +1459,7 @@ export default function PhotoOnDemandLanding() {
           </div>
         ) : (
           <>
-            <div className="mt-10 overflow-hidden rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl">
+            <div className="hidden sm:block mt-10 overflow-hidden rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl">
               <div className="px-5 py-4 flex items-center justify-between">
                 <div className="text-sm font-semibold text-white/85">Лента</div>
                 <div className="text-xs text-white/55">Наведи — пауза. Клик — просмотр.</div>
@@ -1479,7 +1488,8 @@ export default function PhotoOnDemandLanding() {
               </div>
             </div>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Desktop grid */}
+            <div className="hidden sm:grid mt-6 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGrid.map((p, idx) => (
                 <button
                   key={p.path}
@@ -1505,12 +1515,68 @@ export default function PhotoOnDemandLanding() {
                 </button>
               ))}
             </div>
+
+            {/* Mobile grid — luxury app style */}
+            <div className="sm:hidden mt-4 grid grid-cols-2 gap-2">
+              {filteredGrid.map((p, idx) => (
+                <button
+                  key={p.path + "-mobile"}
+                  type="button"
+                  onClick={() => setLightboxIndex(Math.max(0, effectivePortfolio.findIndex((x) => x.path === p.path)))}
+                  className="relative overflow-hidden rounded-2xl bg-black/30"
+                  style={{ aspectRatio: "3/4" }}
+                  aria-label="Открыть фото"
+                >
+                  <img
+                    src={p.url}
+                    alt=""
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    aria-hidden="true"
+                  />
+                  {/* Gradient overlay */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.0) 100%)"
+                    }}
+                    aria-hidden="true"
+                  />
+                  {/* Category label top-left */}
+                  <div className="absolute top-2.5 left-2.5">
+                    <span
+                      className="text-[9px] font-semibold uppercase tracking-widest"
+                      style={{ color: "rgba(255,255,255,0.50)" }}
+                    >
+                      {getCategoryLabel(p.path)}
+                    </span>
+                  </div>
+                  {/* Bottom info */}
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <div className="text-sm font-bold text-white leading-tight">
+                      Кадр #{idx + 1}
+                    </div>
+                    <div
+                      className="text-[11px] mt-0.5 font-medium"
+                      style={{
+                        background: "linear-gradient(90deg, #ff4fd8, #22d3ee)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      Заказать съёмку
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </>
         )}
       </Section>
 
       {/* TOOL */}
-      <Section id="tool" className="py-20 sm:py-24">
+      <Section id="tool" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Инструмент</div>
@@ -1630,7 +1696,7 @@ export default function PhotoOnDemandLanding() {
         id="features"
         ref={featuresRef}
         className={cn(
-          "relative py-20 sm:py-24 scroll-mt-24",
+          "relative py-10 sm:py-24 scroll-mt-24",
           "transition-all duration-700 ease-out",
           featuresInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
         )}
@@ -1704,7 +1770,7 @@ export default function PhotoOnDemandLanding() {
       </section>
 
       {/* TOOLS — плагин + product_retouch */}
-      <Section id="tools" className="py-20 sm:py-24">
+      <Section id="tools" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Инструменты</div>
@@ -1779,7 +1845,7 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* AUDIENCE */}
-      <Section id="audience" className="py-20 sm:py-24">
+      <Section id="audience" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Для кого</div>
@@ -1823,7 +1889,7 @@ export default function PhotoOnDemandLanding() {
         id="stats"
         ref={statsRef}
         className={cn(
-          "relative py-20 sm:py-24 scroll-mt-24",
+          "relative py-10 sm:py-24 scroll-mt-24",
           "transition-all duration-700 ease-out",
           statsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8",
         )}
@@ -1868,7 +1934,7 @@ export default function PhotoOnDemandLanding() {
       </section>
 
       {/* HOW IT WORKS */}
-      <Section id="how" className="py-20 sm:py-24">
+      <Section id="how" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Как это работает</div>
@@ -1942,7 +2008,7 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* SERVICES */}
-      <Section id="services" className="py-20 sm:py-24">
+      <Section id="services" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Услуги</div>
@@ -1979,7 +2045,7 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* TESTIMONIALS */}
-      <Section id="testimonials" className="py-20 sm:py-24">
+      <Section id="testimonials" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Отзывы</div>
@@ -2001,7 +2067,7 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* PRICING — в стиле nanomix.ai */}
-      <Section id="pricing" className="py-20 sm:py-24">
+      <Section id="pricing" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Цены</div>
@@ -2180,7 +2246,7 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* FAQ */}
-      <Section id="faq" className="py-20 sm:py-24">
+      <Section id="faq" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div>
             <div className="text-xs sm:text-sm text-white/60">FAQ</div>
@@ -2209,7 +2275,7 @@ export default function PhotoOnDemandLanding() {
       </Section>
 
       {/* БЛОГ */}
-      <Section id="blog" className="py-20 sm:py-24">
+      <Section id="blog" className="py-10 sm:py-24">
         <div className="flex items-end justify-between gap-6 flex-wrap mb-10">
           <div>
             <div className="text-xs sm:text-sm text-white/60">Блог</div>
