@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
 import { PromptInputBox } from "./components/ui/ai-prompt-box.jsx";
 import { HeroGeometric } from "./components/ui/shape-landing-hero.jsx";
+import { GlowCard } from "./components/ui/spotlight-card.jsx";
 import {
   BadgeCheck,
   BookOpen,
@@ -1742,21 +1743,22 @@ export default function PhotoOnDemandLanding() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => {
               const Icon = f.icon;
+              const glowColors = ["pink", "cyan", "purple", "orange", "pink", "cyan"];
               return (
-                <div
+                <GlowCard
                   key={f.title}
+                  glowColor={glowColors[i % glowColors.length]}
                   className={cn(
-                    "group rounded-3xl border border-[color:var(--border)] bg-[color:var(--card-bg)] backdrop-blur-xl",
-                    "p-6 transition-all duration-700 ease-out card-hover",
+                    "group p-6 transition-all duration-700 ease-out",
                     featuresInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-                    "hover:scale-[1.03] hover:-translate-y-1",
+                    "hover:scale-[1.02] hover:-translate-y-1",
                   )}
                   style={{ transitionDelay: `${i * 90}ms` }}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={cn(
-                        "h-11 w-11 rounded-2xl grid place-items-center",
+                        "h-11 w-11 rounded-2xl grid place-items-center shrink-0",
                         "border border-[color:var(--border)] bg-white/5",
                         "group-hover:border-white/25 transition-colors",
                       )}
@@ -1772,7 +1774,7 @@ export default function PhotoOnDemandLanding() {
                     <Check className="h-4 w-4 text-white/70" />
                     <span>Проверено на реальных задачах</span>
                   </div>
-                </div>
+                </GlowCard>
               );
             })}
           </div>
