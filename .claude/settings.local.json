@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(update-config)",
+      "Bash(identify \"/Volumes/Samsung_T5/01_Projects/_from_inbox_tech/сайт фото на заказ/src/assets/portfolio/EA888_23mm_plus05/hero/hero_001.jpg\")",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Volumes/Samsung_T5/01_Projects/_from_inbox_tech/сайт фото на заказ/src/assets/portfolio/EA888_23mm_plus05/hero/hero_001.jpg\")",
+      "Bash(sips --resampleHeightWidthMax 1200 \"/Volumes/Samsung_T5/01_Projects/_from_inbox_tech/сайт фото на заказ/src/assets/portfolio/EA888_23mm_plus05/hero/hero_001.jpg\" --out /tmp/og_source.jpg)",
+      "Bash(sips -g pixelWidth -g pixelHeight /tmp/og_source.jpg)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Volumes/Samsung_T5/01_Projects/_from_inbox_tech/сайт фото на заказ/public/og-image.jpg\")",
+      "Bash(netlify deploy:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(wait)",
+      "Bash(grep -r portfolio '/Volumes/Samsung_T5/01_Projects/_from_inbox_tech/сайт фото на заказ/src' --include=*.jsx --include=*.js)",
+      "Bash(supabase --version)",
+      "Bash(supabase projects:*)",
+      "Bash(supabase status:*)",
+      "Bash(supabase link:*)",
+      "Bash(node scripts/upload-portfolio.mjs)",
+      "Bash(vercel env:*)",
+      "Bash(vercel project:*)",
+      "Read(//Users/olegpylcyn/.local/share/com.vercel.cli/**)",
+      "Read(//Users/olegpylcyn/.config/vercel/**)",
+      "Read(//Users/olegpylcyn/.local/share/**)",
+      "Read(//Users/olegpylcyn/**)",
+      "Read(//Users/olegpylcyn/.vercel/**)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(find ~/Library -name *.json -path *vercel*)",
+      "Bash(python3:*)",
+      "Bash(vercel --prod)",
+      "Bash(curl:*)",
+      "Bash(supabase:*)"
+    ]
+  }
+}

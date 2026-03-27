@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
 import {
   BadgeCheck,
+  BookOpen,
   Camera,
   Check,
   ChevronDown,
   ChevronRight,
   Clock,
   Github,
+  Home,
   Image as ImageIcon,
   Instagram,
   Layers,
@@ -1128,7 +1130,7 @@ export default function PhotoOnDemandLanding() {
                 type="button"
                 onClick={() => setMobileOpen(true)}
                 className={cn(
-                  "inline-flex items-center justify-center h-11 w-11 rounded-xl",
+                  "sm:inline-flex hidden items-center justify-center h-11 w-11 rounded-xl",
                   "border border-[color:var(--border)] bg-[color:var(--card-bg)]",
                   "transition-transform hover:scale-[1.05] active:scale-[1.01]",
                 )}
@@ -1252,7 +1254,7 @@ export default function PhotoOnDemandLanding() {
           background: "linear-gradient(135deg, rgba(8,8,15,1) 0%, rgba(18,18,35,1) 50%, rgba(8,8,15,1) 100%)",
         }} />
 
-        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pt-20 sm:pt-28 pb-20 sm:pb-28 text-center">
+        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pt-20 sm:pt-28 pb-24 sm:pb-28 text-center">
           <div className={cn("inline-flex items-center gap-2 rounded-full px-3 py-1.5 border border-[color:var(--border)] bg-[color:var(--card-bg)]", heroClasses.chips)}>
             <BadgeCheck className="h-4 w-4 text-white/70" />
             <span className="text-xs text-white/65">Съёмка и ретушь в одном процессе</span>
@@ -2572,6 +2574,56 @@ export default function PhotoOnDemandLanding() {
           </div>
         </div>
       </div>
+
+      {/* ── Mobile Bottom Navigation ── */}
+      <nav
+        aria-label="Мобильная навигация"
+        className="fixed bottom-0 left-0 right-0 z-50 sm:hidden"
+      >
+        {/* Safe area background fill */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'rgba(8,8,15,0.85)', backdropFilter: 'blur(20px)' }}
+          aria-hidden="true"
+        />
+        {/* Top border */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'rgba(255,255,255,0.08)' }}
+          aria-hidden="true"
+        />
+
+        <div className="relative flex items-center justify-around px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]">
+          {[
+            { id: "top",       Icon: Home,      label: "Главная"   },
+            { id: "portfolio", Icon: ImageIcon,  label: "Работы"    },
+            { id: "pricing",   Icon: Package,    label: "Цены"      },
+            { id: "blog",      Icon: BookOpen,   label: "Блог"      },
+          ].map(({ id, Icon, label }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => { scrollToId(id); }}
+              className="bottom-nav-item"
+              aria-label={label}
+            >
+              <Icon className="h-5 w-5" strokeWidth={1.6} />
+              <span className="label">{label}</span>
+            </button>
+          ))}
+
+          <a
+            href={telegramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="bottom-nav-item"
+            aria-label="Telegram"
+          >
+            <Send className="h-5 w-5" strokeWidth={1.6} />
+            <span className="label">Telegram</span>
+          </a>
+        </div>
+      </nav>
     </div>
   );
 }
