@@ -47,12 +47,6 @@
           <button class="btn-nav" id="modelPrev">&#9664;</button>
           <span class="model-nav-label" id="modelNavLabel">Flux Schnell</span>
           <button class="btn-nav" id="modelNext">&#9654;</button>
-          <select id="modelSelect" style="display:none;">
-            <option value="black-forest-labs/flux-schnell">Flux Schnell (быстрый)</option>
-            <option value="black-forest-labs/flux-dev">Flux Dev</option>
-            <option value="stability-ai/sdxl">SDXL</option>
-            <option value="bytedance/sdxl-lightning-4step">SDXL Lightning</option>
-          </select>
         </div>
       </div>
 
@@ -141,6 +135,19 @@
         <p class="hint">Редактирует фото по текстовой инструкции (на английском).</p>
         <textarea id="enhancePrompt" rows="3" placeholder="Например: make colors vibrant, remove dust, clean product photo"></textarea>
         <button id="enhanceBtn" class="btn-primary">Улучшить</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Увеличить разрешение (Upscale)</div>
+        <p class="hint">Повышает резкость и разрешение изображения по URL.</p>
+        <label for="imageUrl">URL изображения</label>
+        <input id="imageUrl" type="text" placeholder="https://..." />
+        <label for="scale">Масштаб</label>
+        <select id="scale">
+          <option value="2">×2</option>
+          <option value="4">×4</option>
+        </select>
+        <button id="upscaleBtn" class="btn-primary">Увеличить</button>
       </div>
 
     </div>

@@ -319,10 +319,15 @@ function bindEvents() {
     generateBtn.addEventListener("click", function () {
       var promptEl = document.getElementById("prompt");
       var ratioEl = document.getElementById("ratio");
+      var resolutionEl = document.getElementById("resolution");
       var variantsEl = document.getElementById("variants");
+      var cbQueue = document.getElementById("cbQueue");
+      var cbNoImage = document.getElementById("cbNoImage");
+      var cbGoogle = document.getElementById("cbGoogle");
       var model = MODEL_KEYS[currentModelIndex] || "black-forest-labs/flux-schnell";
       var prompt = promptEl && promptEl.value ? promptEl.value.trim() : "";
       var ratio = ratioEl ? ratioEl.value : "1:1";
+      var resolution = resolutionEl ? Number(resolutionEl.value) || 1024 : 1024;
       var variants = variantsEl ? Number(variantsEl.value) || 1 : 1;
 
       if (!prompt) {
@@ -338,7 +343,17 @@ function bindEvents() {
         (function(idx) {
           chain = chain.then(function() {
             setStatus("Генерирую вариант " + (idx + 1) + " из " + variants + "...", "busy");
-            return apiPost("/api/generate", { prompt: prompt, model: model, aspectRatio: ratio })
+            var payload = {
+              prompt: prompt,
+              model: model,
+              aspectRatio: ratio,
+              resolution: resolution,
+              queue: cbQueue ? cbQueue.checked : false,
+              noImage: cbNoImage ? cbNoImage.checked : false,
+              googleSearch: cbGoogle ? cbGoogle.checked : false
+            };
+            if (refImageData) payload.referenceImage = refImageData;
+            return apiPost("/api/generate", payload)
               .then(function (data) {
                 var imageUrl = data && data.imageUrl;
                 if (!imageUrl) throw new Error("No imageUrl in response");
