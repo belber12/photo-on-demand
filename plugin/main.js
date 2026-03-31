@@ -229,7 +229,6 @@ async function exportSelectionAsBase64() {
   var photoshop = require("photoshop");
   var app = photoshop.app;
   var core = photoshop.core;
-  var action = photoshop.action;
   var storage = require("uxp").storage;
   var fs = storage.localFileSystem;
   var formats = storage.formats;
@@ -238,22 +237,23 @@ async function exportSelectionAsBase64() {
     throw new Error("Нет открытого документа в Photoshop");
   }
 
-  var doc = app.activeDocument;
+  var originalDoc = app.activeDocument;
   var tempFolder = await fs.getTemporaryFolder();
   var tempFile = await tempFolder.createFile("ai-selection-" + Date.now() + ".png", { overwrite: true });
 
   await core.executeAsModal(async function () {
-    // Копируем выделение в новый документ и экспортируем
-    await action.batchPlay([
-      { _obj: "copyMerged", _options: { dialogOptions: "dontDisplay" } }
-    ], { synchronousExecution: false });
-
-    await action.batchPlay([
-      { _obj: "make", _target: [{ _ref: "document" }], using: { _enum: "layer", _ref: "layer", _value: "clipboard" }, _options: { dialogOptions: "dontDisplay" } }
-    ], { synchronousExecution: false });
-
-    await app.activeDocument.saveAs.png(tempFile, {}, true);
-    await app.activeDocument.closeWithoutSaving();
+    // Дублируем документ чтобы не трогать оригинал
+    var dupDoc = await originalDoc.duplicate();
+    try {
+      // Обрезаем дубликат по границам выделения
+      var bounds = dupDoc.selection.bounds;
+      await dupDoc.crop(bounds);
+      // Экспортируем
+      await dupDoc.saveAs.png(tempFile, {}, true);
+    } finally {
+      // Всегда закрываем дубликат
+      await dupDoc.closeWithoutSaving();
+    }
   }, { commandName: "Export Selection for AI" });
 
   var buffer = await tempFile.read({ format: formats.binary });
