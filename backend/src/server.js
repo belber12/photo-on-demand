@@ -184,7 +184,7 @@ app.post("/api/generate", async (req, res) => {
       // Если передан референс — используем как стартовое изображение (img2img)
       if (refImage) {
         input.image = refImage;
-        input.prompt_strength = 0.8;
+        input.prompt_strength = 0.4; // 0.4 = сильнее держится за референс
       }
 
       const prediction = await createReplicatePrediction(input, model);

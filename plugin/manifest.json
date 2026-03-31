@@ -36,6 +36,7 @@
     }
   ],
   "requiredPermissions": {
+    "localFileSystem": "request",
     "network": {
       "domains": "all"
     }
