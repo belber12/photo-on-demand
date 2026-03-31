@@ -65,6 +65,20 @@ function initRefButtons() {
     });
   }
 
+  // Кнопка "Выделение" — экспортировать выделенную область
+  var refSelectionBtn = document.getElementById("refSelectionBtn");
+  if (refSelectionBtn) {
+    refSelectionBtn.addEventListener("click", function () {
+      setStatus("Экспортирую выделение...", "busy");
+      exportSelectionAsBase64().then(function (b64) {
+        setRefPreview(b64, "Выделенная область");
+        setStatus("Референс: выделение захвачено", "ok");
+      }).catch(function (err) {
+        setStatus("Ошибка захвата выделения: " + (err && err.message), "error");
+      });
+    });
+  }
+
   // Кнопка очистки референса
   var clearRefBtn = document.getElementById("clearRefBtn");
   if (clearRefBtn) {
@@ -209,6 +223,48 @@ function apiPost(path, body) {
     }
     return response.json();
   });
+}
+
+async function exportSelectionAsBase64() {
+  var photoshop = require("photoshop");
+  var app = photoshop.app;
+  var core = photoshop.core;
+  var action = photoshop.action;
+  var storage = require("uxp").storage;
+  var fs = storage.localFileSystem;
+  var formats = storage.formats;
+
+  if (!app.activeDocument) {
+    throw new Error("Нет открытого документа в Photoshop");
+  }
+
+  var doc = app.activeDocument;
+  var tempFolder = await fs.getTemporaryFolder();
+  var tempFile = await tempFolder.createFile("ai-selection-" + Date.now() + ".png", { overwrite: true });
+
+  await core.executeAsModal(async function () {
+    // Копируем выделение в новый документ и экспортируем
+    await action.batchPlay([
+      { _obj: "copyMerged", _options: { dialogOptions: "dontDisplay" } }
+    ], { synchronousExecution: false });
+
+    await action.batchPlay([
+      { _obj: "make", _target: [{ _ref: "document" }], using: { _enum: "layer", _ref: "layer", _value: "clipboard" }, _options: { dialogOptions: "dontDisplay" } }
+    ], { synchronousExecution: false });
+
+    await app.activeDocument.saveAs.png(tempFile, {}, true);
+    await app.activeDocument.closeWithoutSaving();
+  }, { commandName: "Export Selection for AI" });
+
+  var buffer = await tempFile.read({ format: formats.binary });
+  var bytes = new Uint8Array(buffer);
+  var binary = "";
+  var chunkSize = 8192;
+  for (var i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, bytes.length)));
+  }
+  try { await tempFile.delete(); } catch(e) {}
+  return "data:image/png;base64," + btoa(binary);
 }
 
 async function exportActiveDocumentAsBase64() {
