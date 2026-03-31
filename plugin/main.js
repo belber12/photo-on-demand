@@ -142,6 +142,9 @@ function initTabs() {
 // Цены за изображение по моделям
 var MODEL_PRICES = {
   "google/nano-banana-2": 0.003,
+  "bytedance/seedream-5": 0.020,
+  "bytedance/seedream-5-lite": 0.003,
+  "recraft-ai/recraft-v4": 0.040,
   "black-forest-labs/flux-schnell": 0.003,
   "black-forest-labs/flux-dev": 0.055,
   "stability-ai/sdxl": 0.010,
@@ -150,6 +153,9 @@ var MODEL_PRICES = {
 
 var MODEL_LABELS = {
   "google/nano-banana-2": "Nano Banana 2 ⚡",
+  "bytedance/seedream-5": "Seedream 5",
+  "bytedance/seedream-5-lite": "Seedream 5 Lite ⚡",
+  "recraft-ai/recraft-v4": "Recraft V4",
   "black-forest-labs/flux-schnell": "Flux Schnell",
   "black-forest-labs/flux-dev": "Flux Dev",
   "stability-ai/sdxl": "SDXL",

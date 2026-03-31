@@ -180,11 +180,21 @@ app.post("/api/generate", async (req, res) => {
     if (MODE === "replicate") {
       console.log("[generate] model:", model, "prompt:", prompt.slice(0, 80), "ref:", !!refImage);
 
-      const input = { prompt, aspect_ratio: aspectRatio, output_format: "png" };
-      // Если передан референс — используем как стартовое изображение (img2img)
-      if (refImage) {
-        input.image = refImage;
-        input.prompt_strength = 0.4; // 0.4 = сильнее держится за референс
+      let input;
+
+      // Seedream 5 / Seedream 5 Lite
+      if (model.startsWith("bytedance/seedream-5")) {
+        input = { prompt, aspect_ratio: aspectRatio, output_format: "png" };
+        if (refImage) { input.image = refImage; input.prompt_strength = 0.4; }
+
+      // Recraft V4
+      } else if (model === "recraft-ai/recraft-v4") {
+        input = { prompt, size: "1024x1024", output_format: "png" };
+
+      // Остальные модели (Flux, SDXL, Nano Banana)
+      } else {
+        input = { prompt, aspect_ratio: aspectRatio, output_format: "png" };
+        if (refImage) { input.image = refImage; input.prompt_strength = 0.4; }
       }
 
       const prediction = await createReplicatePrediction(input, model);
