@@ -29,7 +29,7 @@ test('validateLead rejects name shorter than 2 chars', () => {
 
 test('validateLead rejects invalid phone formats', () => {
   expect(chat.validateLead({ name: 'Олег', phone: '12345' })).toBeNull()
-  expect(chat.validateLead({ name: 'Олег', phone: '+14155552671' })).toBeNull()
+  expect(chat.validateLead({ name: 'Олег', phone: '+14155552671' })).not.toBeNull() // international OK
   expect(chat.validateLead({ name: 'Олег', phone: '' })).toBeNull()
 })
 

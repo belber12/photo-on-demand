@@ -4,11 +4,12 @@ const Anthropic = require('@anthropic-ai/sdk')
 const { OpenAI } = require('openai')
 const { buildSystemPrompt, SHOOT_TYPES, ALLOWED_PLANS } = require('./knowledge')
 
-const PHONE_RE = /^\+?[78]\d{10}$/
+const PHONE_RE = /^\+?[1-9]\d{6,14}$/
 
 function normalizePhone(raw) {
   const digits = raw.replace(/[\s\-().]/g, '')
-  return digits.startsWith('8') ? '+7' + digits.slice(1) : digits
+  if (digits.startsWith('8') && digits.length === 11) return '+7' + digits.slice(1)
+  return digits.startsWith('+') ? digits : '+' + digits
 }
 
 function validateLead(input) {
@@ -74,24 +75,23 @@ function toOpenAIMessages(systemPrompt, messages) {
   return result
 }
 
-async function processWithOpenRouter({ apiKey, baseURL, model, maxTokens, systemPrompt, messages, signal }) {
-  const client = new OpenAI({
-    apiKey,
-    baseURL,
-  })
+const FALLBACK_MODELS = [
+  process.env.ANTHROPIC_MODEL || 'anthropic/claude-haiku-4-5',
+  'google/gemini-2.0-flash-lite-001',
+  'google/gemini-flash-1.5-8b',
+]
 
+async function callModel({ client, model, maxTokens, systemPrompt, messages }) {
   const response = await client.chat.completions.create({
     model,
     max_tokens: maxTokens,
     messages: toOpenAIMessages(systemPrompt, messages),
     tools: [CAPTURE_LEAD_TOOL_OPENAI],
     tool_choice: 'auto',
-  }, { signal })
-
+  })
   const msg = response.choices[0].message
   let reply = msg.content || ''
   let lead = null
-
   if (msg.tool_calls && msg.tool_calls.length > 0) {
     const tc = msg.tool_calls.find(t => t.function.name === 'capture_lead')
     if (tc) {
@@ -100,8 +100,25 @@ async function processWithOpenRouter({ apiKey, baseURL, model, maxTokens, system
       if (lead && args.reply_text) reply = args.reply_text
     }
   }
-
   return { reply: reply.trim(), lead }
+}
+
+async function processWithOpenRouter({ apiKey, baseURL, model, maxTokens, systemPrompt, messages, signal }) {
+  const client = new OpenAI({ apiKey, baseURL })
+  const primary = model || FALLBACK_MODELS[0]
+  const chain = [primary, ...FALLBACK_MODELS.filter(m => m !== primary)]
+  let lastError
+  for (const m of chain) {
+    try {
+      return await callModel({ client, model: m, maxTokens, systemPrompt, messages })
+    } catch (err) {
+      lastError = err
+      const status = err.status || 0
+      if (status >= 400 && status < 500) throw err
+      console.warn(`[chat] ${m} failed (${status}), trying next`)
+    }
+  }
+  throw lastError
 }
 
 async function processWithAnthropic({ apiKey, baseURL, model, maxTokens, systemPrompt, messages, signal }) {
