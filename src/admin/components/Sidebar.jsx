@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, FileText, Tag, Image, BookOpen, Inbox, ExternalLink, LogOut
+  LayoutDashboard, FileText, Tag, Image, BookOpen, Inbox, ExternalLink, LogOut, Bot
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 
@@ -11,6 +11,7 @@ const NAV = [
   { to: '/admin/portfolio', icon: Image,            label: 'Портфолио' },
   { to: '/admin/blog',      icon: BookOpen,         label: 'Блог' },
   { to: '/admin/leads',     icon: Inbox,            label: 'Заявки' },
+  { to: '/admin/ai-sales',  icon: Bot,              label: 'AI-продавец' },
 ]
 
 export default function Sidebar({ open, onClose }) {

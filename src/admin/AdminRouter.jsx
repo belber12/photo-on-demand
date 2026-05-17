@@ -10,6 +10,7 @@ const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const BlogPage      = lazy(() => import('./pages/BlogPage'))
 const BlogEditPage  = lazy(() => import('./pages/BlogEditPage'))
 const LeadsPage     = lazy(() => import('./pages/LeadsPage'))
+const AiSalesPage   = lazy(() => import('./pages/AiSalesPage'))
 
 function AdminFallback() {
   return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" /></div>
@@ -30,6 +31,7 @@ export default function AdminRouter() {
             <Route path="blog/new" element={<BlogEditPage />} />
             <Route path="blog/:id" element={<BlogEditPage />} />
             <Route path="leads" element={<LeadsPage />} />
+            <Route path="ai-sales" element={<AiSalesPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/admin" replace />} />

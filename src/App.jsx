@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChatWidget } from "./components/chat/ChatWidget";
 import { Link } from "react-router-dom";
 import { supabase, fetchPortfolioItems } from "./lib/supabase.js";
 import { PromptInputBox } from "./components/ui/ai-prompt-box.jsx";
@@ -2887,6 +2888,7 @@ function TestimonialsCarousel({ items }) {
           </div>
         ))}
       </div>
+      <ChatWidget />
     </>
   );
 }

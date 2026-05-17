@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useOutletContext } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import Sidebar from './Sidebar'
-import { useAuth } from '../../hooks/useAuth'
 
 export default function AdminLayout() {
-  const { user } = useAuth()
+  const { user } = useOutletContext()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
