@@ -12,9 +12,15 @@ import { dirname } from "path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 
-const SUPABASE_URL = "https://nctkkhnqtfambhamfvmi.supabase.co";
-const SERVICE_ROLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jdGtraG5xdGZhbWJoYW1mdm1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDAzMjk0MywiZXhwIjoyMDg5NjA4OTQzfQ.ssN8k3BfjiR5Gzu1xxxzNbIk787YVrzX1UETMmx2-c4";
+import { config } from "dotenv";
+config({ path: new URL("../.env.local", import.meta.url).pathname });
+
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://nctkkhnqtfambhamfvmi.supabase.co";
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SERVICE_ROLE_KEY) {
+  console.error("SUPABASE_SERVICE_ROLE_KEY not set in .env.local");
+  process.exit(1);
+}
 const BUCKET = "portfolio";
 const PORTFOLIO_DIR = join(ROOT, "src/assets/portfolio");
 const IMAGE_EXTS = new Set(["jpg", "jpeg", "png", "webp", "avif", "gif"]);
