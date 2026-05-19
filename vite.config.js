@@ -41,7 +41,7 @@ function inlineCssPlugin() {
 // https://vite.dev/config/
 export default defineConfig({
   build: {
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     react(),

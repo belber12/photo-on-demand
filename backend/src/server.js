@@ -17,6 +17,8 @@ const ALLOWED_BROWSER_ORIGINS = new Set(
     .split(",").map((s) => s.trim()).filter(Boolean)
 );
 
+const PLUGIN_API_TOKEN = (process.env.PLUGIN_API_TOKEN || "").trim();
+
 const app = express();
 app.use(helmet());
 
@@ -30,12 +32,27 @@ app.use("/api/chat", cors({
   credentials: false,
 }));
 
-app.use("/api", cors());
 app.use(express.json({ limit: "32kb" }));
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 const chatRateLimiter = createRateLimiter();
+const imageRateLimiter = createRateLimiter();
+
+function imageAuthMiddleware(req, res, next) {
+  if (PLUGIN_API_TOKEN && req.headers['x-plugin-token'] === PLUGIN_API_TOKEN) {
+    return next();
+  }
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(new Error("Direct server calls not allowed"));
+      cb(null, ALLOWED_BROWSER_ORIGINS.has(origin));
+    },
+    methods: ["POST"],
+    allowedHeaders: ["Content-Type", "X-Plugin-Token"],
+    credentials: false,
+  })(req, res, next);
+}
 app.post("/api/chat", chatRateLimiter, async (req, res) => {
   const { messages, channel = "web", session_id } = req.body;
   const validation = validateMessages(messages);
@@ -207,7 +224,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.post("/api/generate", async (req, res) => {
+app.post("/api/generate", imageAuthMiddleware, imageRateLimiter, async (req, res) => {
   const prompt = String(req.body?.prompt || "").trim();
   const model = String(req.body?.model || REPLICATE_GENERATE_MODEL).trim();
   const aspectRatio = String(req.body?.aspectRatio || "1:1");
@@ -249,7 +266,7 @@ app.post("/api/generate", async (req, res) => {
   }
 });
 
-app.post("/api/remove-bg", async (req, res) => {
+app.post("/api/remove-bg", imageAuthMiddleware, imageRateLimiter, async (req, res) => {
   const imageData = String(req.body?.imageData || "").trim();
 
   if (!imageData) {
@@ -283,7 +300,7 @@ app.post("/api/remove-bg", async (req, res) => {
   }
 });
 
-app.post("/api/enhance", async (req, res) => {
+app.post("/api/enhance", imageAuthMiddleware, imageRateLimiter, async (req, res) => {
   const imageData = String(req.body?.imageData || "").trim();
   const prompt = String(req.body?.prompt || "").trim();
   // Модель можно передать с фронта; по умолчанию используем nano-banana-2 (поддерживает img2img)
@@ -340,7 +357,7 @@ app.post("/api/enhance", async (req, res) => {
 });
 
 // Восстановление старых/повреждённых фото (царапины, дефекты, размытость, лица)
-app.post("/api/restore", async (req, res) => {
+app.post("/api/restore", imageAuthMiddleware, imageRateLimiter, async (req, res) => {
   const imageData = String(req.body?.imageData || "").trim();
 
   if (!imageData) {
@@ -374,7 +391,7 @@ app.post("/api/restore", async (req, res) => {
 });
 
 // Раскраска чёрно-белых фото
-app.post("/api/colorize", async (req, res) => {
+app.post("/api/colorize", imageAuthMiddleware, imageRateLimiter, async (req, res) => {
   const imageData = String(req.body?.imageData || "").trim();
 
   if (!imageData) {
@@ -407,7 +424,7 @@ app.post("/api/colorize", async (req, res) => {
   }
 });
 
-app.post("/api/upscale", async (req, res) => {
+app.post("/api/upscale", imageAuthMiddleware, imageRateLimiter, async (req, res) => {
   const imageUrl = String(req.body?.imageUrl || "").trim();
   const scale = Number(req.body?.scale || 2);
 

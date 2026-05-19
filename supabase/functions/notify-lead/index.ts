@@ -5,6 +5,11 @@ const CHAT_ID = Deno.env.get("TELEGRAM_CHAT_ID")!;
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const ALERT_EMAIL = Deno.env.get("ALERT_EMAIL") || "olegpyitsyn@yandex.ru";
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+
 serve(async (req) => {
   try {
     const body = await req.json();
@@ -39,13 +44,13 @@ serve(async (req) => {
       const html = `
         <h2>📸 Новая заявка с сайта</h2>
         <table style="border-collapse:collapse;font-family:sans-serif">
-          <tr><td style="padding:6px 12px;color:#666">Имя</td><td style="padding:6px 12px"><b>${record.name || "—"}</b></td></tr>
-          <tr><td style="padding:6px 12px;color:#666">Телефон</td><td style="padding:6px 12px"><b>${record.phone || "—"}</b></td></tr>
-          <tr><td style="padding:6px 12px;color:#666">Email</td><td style="padding:6px 12px">${record.email || "—"}</td></tr>
-          <tr><td style="padding:6px 12px;color:#666">Тип съёмки</td><td style="padding:6px 12px">${record.shoot_type || "—"}</td></tr>
-          <tr><td style="padding:6px 12px;color:#666">Тариф</td><td style="padding:6px 12px">${record.plan || "—"}</td></tr>
-          <tr><td style="padding:6px 12px;color:#666">Источник</td><td style="padding:6px 12px">${record.source || "—"}</td></tr>
-          ${record.message ? `<tr><td style="padding:6px 12px;color:#666">Сообщение</td><td style="padding:6px 12px">${record.message}</td></tr>` : ""}
+          <tr><td style="padding:6px 12px;color:#666">Имя</td><td style="padding:6px 12px"><b>${escapeHtml(String(record.name || "—"))}</b></td></tr>
+          <tr><td style="padding:6px 12px;color:#666">Телефон</td><td style="padding:6px 12px"><b>${escapeHtml(String(record.phone || "—"))}</b></td></tr>
+          <tr><td style="padding:6px 12px;color:#666">Email</td><td style="padding:6px 12px">${escapeHtml(String(record.email || "—"))}</td></tr>
+          <tr><td style="padding:6px 12px;color:#666">Тип съёмки</td><td style="padding:6px 12px">${escapeHtml(String(record.shoot_type || "—"))}</td></tr>
+          <tr><td style="padding:6px 12px;color:#666">Тариф</td><td style="padding:6px 12px">${escapeHtml(String(record.plan || "—"))}</td></tr>
+          <tr><td style="padding:6px 12px;color:#666">Источник</td><td style="padding:6px 12px">${escapeHtml(String(record.source || "—"))}</td></tr>
+          ${record.message ? `<tr><td style="padding:6px 12px;color:#666">Сообщение</td><td style="padding:6px 12px">${escapeHtml(String(record.message))}</td></tr>` : ""}
         </table>
         <p style="color:#999;font-size:12px">${new Date(record.created_at).toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })}</p>
       `

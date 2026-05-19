@@ -12,8 +12,10 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
-    X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co https://openrouter.ai https://*.railway.app; frame-src 'none'; object-src 'none'; base-uri 'self';"
 
 # Кеш для хешированных ассетов (JS/CSS с content hash — 1 год)
 [[headers]]

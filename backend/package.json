@@ -9,17 +9,17 @@
     "test": "jest --testPathPatterns=src/__tests__"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "latest",
-    "@upstash/ratelimit": "latest",
-    "@upstash/redis": "latest",
-    "cors": "latest",
-    "dotenv": "latest",
-    "express": "latest",
-    "helmet": "latest",
+    "@anthropic-ai/sdk": "^0.96.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "openai": "^6.38.0"
   },
   "devDependencies": {
-    "jest": "latest",
-    "supertest": "latest"
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
