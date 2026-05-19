@@ -51,6 +51,7 @@ app.post("/api/chat", rateLimiter, async (req, res) => {
   try {
     const result = await processMessage({ messages, channel, sessionId: session_id });
     result.reply = sanitizeOutput(result.reply);
+    console.log('[chat] lead:', result.lead ? JSON.stringify(result.lead) : 'null');
     return res.json(result);
   } catch (err) {
     if (err.name === "AbortError") {
