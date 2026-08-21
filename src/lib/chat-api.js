@@ -1,7 +1,7 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8787'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '/api/chat'
 
 export async function sendMessage({ messages, channel = 'web', sessionId }) {
-  const res = await fetch(`${BACKEND_URL}/api/chat`, {
+  const res = await fetch(`${BACKEND_URL}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages, channel, session_id: sessionId }),
