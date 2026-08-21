@@ -1,6 +1,5 @@
-// Netlify Function: прокси чата на Hermes (профиль anna, API Server)
-// Фронтенд ожидает: { reply: string, lead?: { name, phone, ... } | null }
-exports.handler = async (event) => {
+// Netlify Function (ESM): прокси чата на Hermes (профиль anna, API Server)
+export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) }
   }
@@ -22,7 +21,7 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         model: 'anna',
-        messages: messages.slice(-12), // последние 12 сообщений — контекст
+        messages: messages.slice(-12),
         max_tokens: 400,
       }),
     })
@@ -35,7 +34,6 @@ exports.handler = async (event) => {
     const data = await res.json()
     const reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || ''
 
-    // Простой парсинг лида: если Анна написала имя и телефон — фиксируем
     let lead = null
     const phoneMatch = reply.match(/\+?7\s?[-\s(]?\d{3}[-\s)]?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}|8\s?[-\s(]?\d{3}[-\s)]?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}/)
     if (phoneMatch) {
