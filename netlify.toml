@@ -57,13 +57,14 @@
   status = 200
   force = true
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
 # Чат: /api/chat -> Netlify Function -> Hermes (Анна)
+# ВАЖНО: должен идти ДО правила /* (SPA fallback)
 [[redirects]]
   from = "/api/chat"
   to = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
