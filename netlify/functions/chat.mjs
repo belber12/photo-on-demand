@@ -34,10 +34,16 @@ export const handler = async (event) => {
     const data = await res.json()
     const reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || ''
 
+    // Парсинг лида из формата Анны: «Записала вас, ИМЯ. Телефон +7XXXXXXXXXX подтверждён.»
     let lead = null
-    const phoneMatch = reply.match(/\+?7\s?[-\s(]?\d{3}[-\s)]?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}|8\s?[-\s(]?\d{3}[-\s)]?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}/)
-    if (phoneMatch) {
-      lead = { name: null, phone: phoneMatch[0].replace(/[^\d+]/g, ''), source: 'web' }
+    const nameMatch = reply.match(/Записала вас,\s*([А-ЯЁ][а-яё-]+)/)
+    const phoneMatch = reply.match(/\+7[\s\d-]{9,14}/)
+    if (nameMatch && phoneMatch) {
+      lead = {
+        name: nameMatch[1],
+        phone: phoneMatch[0].replace(/[^\d+]/g, '').replace(/^8/, '+7'),
+        source: 'web',
+      }
     }
 
     return {
