@@ -34,13 +34,17 @@ export const handler = async (event) => {
     const data = await res.json()
     const reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || ''
 
-    // Парсинг лида из формата Анны: «Записала вас, ИМЯ. Телефон +7XXXXXXXXXX подтверждён.»
+    // Парсинг лида: телефон — из сообщения клиента (полный), имя — из ответа Анны или сообщения клиента
     let lead = null
-    const nameMatch = reply.match(/Записала вас,\s*([А-ЯЁ][а-яё-]+)/)
-    const phoneMatch = reply.match(/\+7[\s\d-]{9,14}/)
-    if (nameMatch && phoneMatch) {
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user')
+    const clientText = lastUserMsg ? String(lastUserMsg.content || '') : ''
+    const phoneMatch = clientText.match(/\+7[\s\d-]{9,14}|8[\s\d-]{10,14}/)
+    if (phoneMatch) {
+      const nameFromReply = reply.match(/Записала вас,\s*([А-ЯЁ][а-яё-]+)/)
+      const nameFromClient = clientText.match(/(?:зовут|меня зовут|я)\s+([А-ЯЁ][а-яё-]+)/i)
+      const name = (nameFromReply && nameFromReply[1]) || (nameFromClient && nameFromClient[1]) || null
       lead = {
-        name: nameMatch[1],
+        name,
         phone: phoneMatch[0].replace(/[^\d+]/g, '').replace(/^8/, '+7'),
         source: 'web',
       }
