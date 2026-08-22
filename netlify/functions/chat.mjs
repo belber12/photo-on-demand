@@ -21,7 +21,7 @@ export const handler = async (event) => {
       },
       body: JSON.stringify({
         model: 'anna',
-        messages: messages.slice(-12),
+        messages: messages.slice(-8),
         max_tokens: 220,
       }),
     })
