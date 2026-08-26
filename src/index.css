@@ -159,3 +159,5 @@ body {
 
   .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
 }
+
+/* 2026-08-26 cache-bust: CORS header fix */
