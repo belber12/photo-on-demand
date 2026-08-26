@@ -42,6 +42,7 @@ function inlineCssPlugin() {
 export default defineConfig({
   build: {
     sourcemap: false,
+    cssCodeSplit: false,
   },
   plugins: [
     react(),
