@@ -10,26 +10,24 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        bg: {
-          primary: '#08080f',
-          secondary: '#0d0d16',
-          tertiary: '#111320',
+        ink: {
+          DEFAULT: '#1c1917',
+          soft: '#57534e',
+          muted: '#8a857f',
         },
-        accent: {
-          from: '#ff4fd8',
-          to: '#22d3ee',
+        paper: {
+          DEFAULT: '#faf7f2',
+          warm: '#f3eee6',
+          card: '#ffffff',
         },
-        surface: {
-          DEFAULT: 'rgba(255,255,255,0.06)',
-          hover: 'rgba(255,255,255,0.09)',
-          active: 'rgba(255,255,255,0.12)',
+        brand: {
+          DEFAULT: '#b3541e',
+          dark: '#8f3f14',
+          soft: '#f4e3d4',
         },
       },
       borderRadius: {
         '4xl': '2rem',
-      },
-      backdropBlur: {
-        xs: '2px',
       },
     },
   },

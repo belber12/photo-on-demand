@@ -17,7 +17,7 @@ export function MessageBubble({ message }) {
       <div
         className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm leading-relaxed ${
           isUser
-            ? 'bg-gradient-to-r from-[#ff4fd8] to-[#22d3ee] text-white rounded-br-sm'
+            ? 'bg-brand text-white rounded-br-sm'
             : 'bg-white/5 text-gray-200 rounded-bl-sm border border-white/10'
         }`}
       >

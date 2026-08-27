@@ -7,7 +7,7 @@ export function QuickReplies({ onSelect }) {
         <button
           key={text}
           onClick={() => onSelect(text)}
-          className="text-xs px-3 py-1.5 rounded-full border border-white/20 text-gray-300 hover:border-[#ff4fd8]/60 hover:text-white transition-colors bg-white/5"
+          className="text-xs px-3 py-1.5 rounded-full border border-white/20 text-gray-300 hover:border-brand/70 hover:text-white transition-colors bg-white/5"
         >
           {text}
         </button>

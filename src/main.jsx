@@ -8,6 +8,8 @@ const App         = lazy(() => import('./App.jsx'))
 const AdminRouter = lazy(() => import('./admin/AdminRouter.jsx'))
 const BlogListPage = lazy(() => import('./pages/BlogListPage.jsx'))
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage.jsx'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage.jsx'))
+const TermsPage = lazy(() => import('./pages/TermsPage.jsx'))
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -19,6 +21,8 @@ createRoot(document.getElementById('root')).render(
               <Route path="/admin/*" element={<AdminRouter />} />
               <Route path="/blog" element={<BlogListPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
               <Route path="/*" element={<App />} />
             </Routes>
           </Suspense>

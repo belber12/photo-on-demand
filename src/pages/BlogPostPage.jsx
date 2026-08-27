@@ -33,8 +33,8 @@ export default function BlogPostPage() {
 
   if (article === undefined) {
     return (
-      <div className="min-h-screen bg-[#08080f] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      <div className="min-h-screen bg-paper flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-stone-300 border-t-brand rounded-full animate-spin" />
       </div>
     )
   }
@@ -81,11 +81,11 @@ export default function BlogPostPage() {
         jsonLd={jsonLd}
       />
 
-      <div className="min-h-screen bg-[#08080f] text-white">
+      <div className="min-h-screen bg-paper text-ink">
         {/* Шапка */}
-        <div className="border-b border-white/10">
+        <div className="border-b border-stone-200 bg-white">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 py-5 flex items-center gap-4">
-            <Link to="/blog" className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors">
+            <Link to="/blog" className="flex items-center gap-1.5 text-ink-soft hover:text-ink text-sm transition-colors">
               <ArrowLeft size={15} /> Все статьи
             </Link>
           </div>
@@ -93,16 +93,16 @@ export default function BlogPostPage() {
 
         <article className="mx-auto max-w-3xl px-4 sm:px-6 py-14">
           {/* Breadcrumb */}
-          <nav className="text-xs text-white/35 mb-8 flex items-center gap-2">
-            <Link to="/" className="hover:text-white transition-colors">Главная</Link>
+          <nav className="text-xs text-ink-muted mb-8 flex items-center gap-2">
+            <Link to="/" className="hover:text-ink transition-colors">Главная</Link>
             <span>/</span>
-            <Link to="/blog" className="hover:text-white transition-colors">Блог</Link>
+            <Link to="/blog" className="hover:text-ink transition-colors">Блог</Link>
             <span>/</span>
-            <span className="text-white/55 line-clamp-1">{article.title}</span>
+            <span className="text-ink-soft line-clamp-1">{article.title}</span>
           </nav>
 
           {/* Мета */}
-          <div className="flex items-center gap-2 text-xs text-white/40 mb-5">
+          <div className="flex items-center gap-2 text-xs text-ink-muted mb-5">
             <Calendar size={12} />
             {new Date(article.created_at).toLocaleDateString('ru', { day: 'numeric', month: 'long', year: 'numeric' })}
           </div>
@@ -112,7 +112,7 @@ export default function BlogPostPage() {
           </h1>
 
           {article.excerpt && (
-            <p className="text-xl text-white/60 leading-relaxed mb-8 border-l-2 border-white/20 pl-4">
+            <p className="text-xl text-ink-soft leading-relaxed mb-8 border-l-2 border-brand pl-4">
               {article.excerpt}
             </p>
           )}
@@ -126,27 +126,19 @@ export default function BlogPostPage() {
           )}
 
           {/* Тело статьи */}
-          <div className="prose prose-invert prose-lg max-w-none
-            prose-headings:font-bold prose-headings:tracking-tight
-            prose-p:text-white/75 prose-p:leading-relaxed
-            prose-a:text-white prose-a:underline
-            prose-strong:text-white
-            prose-ul:text-white/75 prose-ol:text-white/75
-            prose-blockquote:border-white/20 prose-blockquote:text-white/60
-            prose-code:bg-white/10 prose-code:px-1.5 prose-code:rounded prose-code:text-sm
-          ">
-            {article.body.split('\n').map((line, i) => (
+          <div className="space-y-4 text-ink-soft leading-relaxed">
+            {article.body.split('\n').map((line, i) =>
               line.trim() === ''
                 ? <br key={i} />
                 : <p key={i}>{line}</p>
-            ))}
+            )}
           </div>
 
           {/* CTA */}
-          <div className="mt-14 p-8 bg-white/5 border border-white/10 rounded-2xl text-center">
+          <div className="mt-14 p-8 bg-paper-warm border border-stone-200 rounded-2xl text-center">
             <p className="text-lg font-semibold mb-2">Готовы к съёмке?</p>
-            <p className="text-white/55 text-sm mb-5">Оставьте заявку — ответим и подберём слот</p>
-            <Link to="/#cta" className="inline-block px-6 py-3 bg-white text-gray-900 rounded-xl text-sm font-semibold hover:bg-gray-100 transition-colors">
+            <p className="text-ink-soft text-sm mb-5">Оставьте заявку — ответим и подберём слот</p>
+            <Link to="/#contacts" className="inline-block px-6 py-3 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dark transition-colors">
               Записаться на съёмку
             </Link>
           </div>
@@ -154,17 +146,17 @@ export default function BlogPostPage() {
 
         {/* Похожие статьи */}
         {related.length > 0 && (
-          <div className="border-t border-white/10">
+          <div className="border-t border-stone-200">
             <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12">
               <h2 className="text-lg font-semibold mb-6">Читайте также</h2>
               <div className="grid sm:grid-cols-3 gap-4">
                 {related.map(rel => (
                   <Link key={rel.id} to={`/blog/${rel.slug}`}
-                    className="group p-4 bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-xl transition-all">
-                    <p className="text-xs text-white/35 mb-2">
+                    className="group p-4 bg-white hover:shadow-md border border-stone-200 hover:border-stone-300 rounded-xl transition-all">
+                    <p className="text-xs text-ink-muted mb-2">
                       {new Date(rel.created_at).toLocaleDateString('ru', { day: 'numeric', month: 'short' })}
                     </p>
-                    <p className="text-sm font-medium group-hover:text-white/90 line-clamp-3">{rel.title}</p>
+                    <p className="text-sm font-medium group-hover:text-brand-dark line-clamp-3">{rel.title}</p>
                   </Link>
                 ))}
               </div>
