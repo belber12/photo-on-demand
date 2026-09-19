@@ -58,11 +58,12 @@
   status = 200
   force = true
 
-# Чат: /api/chat -> Netlify Function (Анна)
+# Чат: /api/chat -> бэкенд Анны на Mac Mini (постоянный адрес Tailscale Funnel, без живого туннеля)
 [[redirects]]
   from = "/api/chat"
-  to = "/.netlify/functions/chat"
+  to = "https://mac-mini-oleg.tailc1273b.ts.net/api/chat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
